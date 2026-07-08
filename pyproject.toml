@@ -1,0 +1,72 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pitch-doctor"
+version = "0.1.0"
+description = "Turn any bad website into your next client. A CLI that audits business websites and generates client-ready, branded PDF/HTML reports for freelancers to win redesign work."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "pitch-doctor contributors" }]
+keywords = ["website-audit", "cli", "freelance", "sales", "seo", "performance", "playwright"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Internet :: WWW/HTTP :: Site Management",
+]
+dependencies = [
+    "typer>=0.12.3",
+    "rich>=13.7.1",
+    "playwright>=1.44.0",
+    "httpx>=0.27.0",
+    "beautifulsoup4>=4.12.3",
+    "jinja2>=3.1.4",
+    "pydantic>=2.7.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.2.0",
+    "pytest-asyncio>=0.23.7",
+    "ruff>=0.4.8",
+]
+pdf = [
+    "weasyprint>=61.2",
+]
+
+[project.urls]
+Homepage = "https://github.com/pitch-doctor/pitch-doctor"
+Issues = "https://github.com/pitch-doctor/pitch-doctor/issues"
+
+[project.scripts]
+pitch-doctor = "pitch_doctor.cli:app"
+
+[tool.setuptools.packages.find]
+include = ["pitch_doctor*"]
+
+[tool.setuptools.package-data]
+pitch_doctor = ["report/templates/*.jinja", "i18n/*.json"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+ignore = ["E501"]
+
+[tool.ruff.lint.per-file-ignores]
+# Typer's documented pattern requires calling typer.Argument()/Option() as
+# parameter defaults; ruff's "no function call in default" check doesn't know that.
+"pitch_doctor/cli.py" = ["B008"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
