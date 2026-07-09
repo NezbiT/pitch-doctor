@@ -1,0 +1,137 @@
+{
+  "meta": {
+    "language_name": "Français"
+  },
+  "cli": {
+    "unreachable_error": "Impossible d'accéder à {url} : {detail}. C'est justement le tout premier constat du rapport -- un site inaccessible fait perdre absolument tous les visiteurs, pas seulement une partie.",
+    "scanning": "Analyse de {url} en cours...",
+    "scan_done": "Analyse terminée : {url} obtient {score}/100 ({grade}).",
+    "batch_summary_heading": "Résumé de l'analyse groupée",
+    "report_written": "Rapport enregistré dans {path}",
+    "json_written": "Données brutes enregistrées dans {path}"
+  },
+  "report": {
+    "tagline": "Transformez n'importe quel site web bâclé en votre prochain client.",
+    "cover_report_title": "Rapport d'Audit du Site Web",
+    "cover_prepared_for": "Préparé pour",
+    "cover_prepared_by": "Préparé par",
+    "cover_scanned_on": "Analysé le {date}",
+    "cover_health_score": "Score de Santé",
+    "cover_grade": "Note",
+    "exec_summary_heading": "Résumé Exécutif",
+    "exec_summary_critical_sentence": "{critical} problème(s) critique(s) et {warning} avertissement(s) vous coûtent des clients en ce moment même.",
+    "exec_summary_all_good_sentence": "Aucun problème critique détecté -- ce site est en bonne forme. Les remarques ci-dessous sont des pistes pour encore l'améliorer.",
+    "exec_summary_intro": "Ce rapport analyse votre site web tel que vos clients -- et Google -- le vivent réellement, et traduit chaque constat technique en langage clair pour votre entreprise.",
+    "section_what_we_found": "Ce que nous avons trouvé",
+    "section_why_it_matters": "Pourquoi c'est important pour votre entreprise",
+    "section_what_you_get": "Ce que vous y gagnez en le corrigeant",
+    "section_mobile_view": "Votre site sur un téléphone",
+    "section_desktop_view": "Votre site sur un ordinateur",
+    "severity_critical": "Critique",
+    "severity_warning": "À surveiller",
+    "severity_ok": "Bien",
+    "next_steps_heading": "Prochaines étapes",
+    "next_steps_body": "Les problèmes ci-dessus sont courants, faciles à corriger, et méritent d'être réglés rapidement -- chaque jour qui passe sans correction coûte des visiteurs et des appels manqués. Réglons ça ensemble.",
+    "next_steps_cta": "Contactez-nous pour planifier la mise à niveau de votre site.",
+    "footer_generated_by": "Généré par {brand_name} avec pitch-doctor",
+    "toc_heading": "Sommaire"
+  },
+  "checks": {
+    "load_speed": {
+      "name": "Vitesse de Chargement Mobile",
+      "impact_critical": "Votre site met {seconds}s à afficher quoi que ce soit sur un téléphone -- plus de la moitié des visiteurs partent avant même de le voir.",
+      "impact_warning": "Votre site met {seconds}s à afficher quoi que ce soit sur un téléphone. Chaque seconde de plus au-delà de 3 vous coûte des visiteurs, discrètement.",
+      "impact_ok": "Votre site affiche du contenu en {seconds}s sur un téléphone -- assez rapide pour retenir vos visiteurs.",
+      "found_critical": "Temps avant l'apparition d'un contenu visible, sur une connexion mobile de milieu de gamme simulée : {seconds} secondes.",
+      "found_warning": "Temps avant l'apparition d'un contenu visible, sur une connexion mobile de milieu de gamme simulée : {seconds} secondes.",
+      "found_ok": "Temps avant l'apparition d'un contenu visible, sur une connexion mobile de milieu de gamme simulée : {seconds} secondes.",
+      "benefit": "Un site plus rapide garde vos visiteurs assez longtemps sur la page pour appeler, réserver ou acheter -- au lieu de faire demi-tour."
+    },
+    "ssl": {
+      "name": "Sécurité SSL / HTTPS",
+      "impact_critical": "Chrome et Safari indiquent à vos clients que ce site n'est \"pas sécurisé\" -- un signal d'alarme pour quiconque s'apprête à partager un numéro de téléphone, un e-mail ou une carte bancaire.",
+      "impact_warning": "Votre configuration HTTPS présente des problèmes pouvant déclencher des avertissements de sécurité pour certains visiteurs.",
+      "impact_ok": "Votre site utilise HTTPS, donc les navigateurs affichent le cadenas de sécurité que vos clients attendent.",
+      "found_critical": "Aucun certificat SSL valide n'a été trouvé. {detail}",
+      "found_warning": "Le SSL est présent mais un problème a été signalé. {detail}",
+      "found_ok": "Un certificat SSL valide est installé et HTTPS est appliqué.",
+      "benefit": "Le cadenas de sécurité évite que les visiteurs méfiants ne partent avant même d'avoir lu votre page.",
+      "detail_no_https": "Le site n'utilise pas du tout HTTPS.",
+      "detail_invalid_cert": "{error}"
+    },
+    "mobile_rendering": {
+      "name": "Affichage Mobile",
+      "impact_critical": "Votre site ne s'adapte pas correctement aux écrans de téléphone -- textes ou boutons coupés, ou défilement horizontal nécessaire pour tout lire. Or la majorité de vos visiteurs sont sur téléphone en ce moment même.",
+      "impact_warning": "Votre site fonctionne globalement bien sur téléphone, mais quelques petits problèmes de mise en page le font paraître moins soigné.",
+      "impact_ok": "Votre site s'adapte parfaitement aux écrans de téléphone.",
+      "found_critical": "Problèmes d'affichage détectés sur une fenêtre mobile de 390x844 : {issues}.",
+      "found_warning": "Problèmes d'affichage mineurs détectés sur une fenêtre mobile de 390x844 : {issues}.",
+      "found_ok": "La page s'est affichée correctement à la fois sur mobile (390x844) et sur ordinateur (1440x900).",
+      "benefit": "Une mise en page adaptée aux téléphones permet aux visiteurs de vraiment lire votre menu, vos prix ou votre formulaire de réservation, sans avoir à zoomer.",
+      "issue_viewport": "aucune balise viewport mobile, donc les téléphones affichent une version réduite du site pour ordinateur",
+      "issue_overflow": "le contenu déborde de {px}px hors de l'écran, ce qui force un défilement horizontal"
+    },
+    "outdated_signals": {
+      "name": "Signes de Contenu Obsolète",
+      "impact_critical": "Le pied de page de votre site affiche toujours {year} -- les clients se demandent si vous êtes encore en activité ou si ce site est mis à jour depuis des années.",
+      "impact_warning": "La date de votre pied de page est légèrement dépassée, ce qui peut donner une impression de site négligé, même s'il est par ailleurs correct.",
+      "impact_ok": "Votre site n'affiche aucune date visiblement obsolète.",
+      "found_critical": "Année {year} trouvée dans le pied de page.",
+      "found_warning": "Année {year} trouvée dans le pied de page.",
+      "found_ok": "Aucune année de copyright obsolète détectée dans le pied de page.",
+      "benefit": "Un pied de page à jour signale discrètement que l'entreprise est ouverte, active, et attentive aux détails."
+    },
+    "broken_links": {
+      "name": "Liens Cassés",
+      "impact_critical": "{count} lien(s) de votre site mènent vers des pages qui n'existent plus. Chacun d'eux est un visiteur qui s'est heurté à un mur au lieu de trouver ce qu'il cherchait.",
+      "impact_warning": "{count} lien(s) de votre site mènent vers des pages qui n'existent plus -- un petit nettoyage s'impose.",
+      "impact_ok": "Tous les liens internes vérifiés fonctionnent correctement.",
+      "found_critical": "{checked} liens internes vérifiés ; {count} ont renvoyé une erreur : {examples}.",
+      "found_warning": "{checked} liens internes vérifiés ; {count} ont renvoyé une erreur : {examples}.",
+      "found_ok": "{checked} liens internes vérifiés ; aucun n'était cassé.",
+      "benefit": "Corriger les liens cassés permet à vos visiteurs -- et à Google -- d'arriver vraiment là où ils voulaient aller sur votre site."
+    },
+    "contact_friction": {
+      "name": "Friction de Contact",
+      "impact_critical": "Les visiteurs voient votre numéro de téléphone mais ne peuvent pas appuyer dessus pour appeler, ou ne trouvent pas facilement un e-mail ou une adresse -- sur mobile, c'est souvent ce qui fait la différence entre un client qui appelle et un client qui abandonne.",
+      "impact_warning": "Contacter votre entreprise demande un peu plus d'effort que nécessaire pour un visiteur sur téléphone.",
+      "impact_ok": "Les visiteurs peuvent facilement appeler, écrire ou trouver votre entreprise depuis n'importe quelle page.",
+      "found_critical": "Problèmes de contact trouvés : {issues}.",
+      "found_warning": "Problèmes de contact trouvés : {issues}.",
+      "found_ok": "Les numéros de téléphone sont cliquables et les informations de contact sont faciles à trouver.",
+      "benefit": "Des liens d'appel en un clic et un contact clair transforment des visiteurs occasionnels en appels et e-mails réels.",
+      "issue_phone_not_tappable": "le numéro de téléphone est affiché en texte brut, pas comme un lien tel: cliquable",
+      "issue_no_email": "aucun e-mail ou lien de contact visible",
+      "issue_no_address": "aucune adresse physique trouvée sur la page"
+    },
+    "search_visibility": {
+      "name": "Visibilité de Base dans les Recherches",
+      "impact_critical": "Il manque à votre site des informations de base dont Google a besoin pour l'afficher dans les résultats de recherche locaux -- vous êtes peut-être invisible pour les personnes qui cherchent vos services à proximité.",
+      "impact_warning": "Il manque à votre site quelques éléments de base pour la visibilité, qui faciliteraient sa recommandation par Google.",
+      "impact_ok": "Les éléments de base recherchés par Google (titre, description, aperçu social, données structurées) sont tous présents.",
+      "found_critical": "Manquant(s) : {issues}.",
+      "found_warning": "Manquant(s) : {issues}.",
+      "found_ok": "Le titre, la méta-description, les balises Open Graph, le favicon et les données structurées ont tous été trouvés.",
+      "benefit": "Corriger ces éléments de base aide votre entreprise à vraiment apparaître -- et à bien paraître -- quand des clients à proximité recherchent ce que vous proposez.",
+      "issue_title": "titre de page manquant ou vide",
+      "issue_meta_description": "méta-description manquante ou vide",
+      "issue_og": "balises Open Graph manquantes (utilisées pour les aperçus de liens sur Facebook/WhatsApp)",
+      "issue_favicon": "favicon manquant (l'icône de l'onglet du navigateur)",
+      "issue_structured_data": "aucune donnée structurée LocalBusiness (JSON-LD) pour Google"
+    },
+    "reachability": {
+      "name": "Accessibilité et Disponibilité",
+      "impact_critical": "Votre site n'a pas pu être atteint du tout pendant cette analyse. Quiconque clique sur votre fiche Google ou un lien partagé tombe actuellement sur une erreur au lieu de votre entreprise.",
+      "impact_warning": "Votre site se charge, mais des redirections ou des incohérences d'adresse ajoutent de la friction et peuvent perturber les moteurs de recherche.",
+      "impact_ok": "Votre site se résout correctement, sans redirections inutiles.",
+      "found_critical": "{detail}",
+      "found_warning": "{detail}",
+      "found_ok": "Le DNS se résout, le site a répondu avec le statut {status}, et il n'y a pas de redirections problématiques.",
+      "benefit": "Un site accessible de façon fiable est le strict minimum pour ne pas perdre de clients avant même qu'ils ne voient votre proposition.",
+      "detail_unreachable": "Le site n'a pas pu être atteint : {error}",
+      "detail_dns_failure": "Le DNS ne s'est pas résolu pour ce domaine.",
+      "detail_redirect_chain": "Le site redirige à travers {hops} sauts avant de finir de charger.",
+      "detail_www_mismatch": "Les versions www et sans www du domaine se comportent de façon incohérente."
+    }
+  }
+}

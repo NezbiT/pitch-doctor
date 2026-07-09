@@ -29,3 +29,12 @@ def test_unmeasurable_load_is_critical(strings_en):
     ctx = make_context(load_time_seconds=None)
     result = load_speed.evaluate(ctx, strings_en)
     assert result.severity == Severity.CRITICAL
+
+
+def test_fast_load_renders_in_all_four_languages(strings_en, strings_es, strings_fr, strings_zh):
+    ctx = make_context(load_time_seconds=1.0)
+    for strings in (strings_en, strings_es, strings_fr, strings_zh):
+        result = load_speed.evaluate(ctx, strings)
+        assert result.severity == Severity.OK
+        assert "1.0" in result.impact
+        assert result.name  # non-empty localized check name

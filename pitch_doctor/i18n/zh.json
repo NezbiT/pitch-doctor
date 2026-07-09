@@ -1,0 +1,137 @@
+{
+  "meta": {
+    "language_name": "中文"
+  },
+  "cli": {
+    "unreachable_error": "无法访问 {url}：{detail}。这本身就是报告里的第一项发现——网站无法访问，流失的可不只是部分访客，而是全部访客。",
+    "scanning": "正在扫描 {url}...",
+    "scan_done": "扫描完成：{url} 得分 {score}/100（{grade}）。",
+    "batch_summary_heading": "批量扫描摘要",
+    "report_written": "报告已保存至 {path}",
+    "json_written": "原始检测数据已保存至 {path}"
+  },
+  "report": {
+    "tagline": "把任何一个糟糕的网站，变成你的下一个客户。",
+    "cover_report_title": "网站体检报告",
+    "cover_prepared_for": "报告对象",
+    "cover_prepared_by": "报告制作",
+    "cover_scanned_on": "扫描日期：{date}",
+    "cover_health_score": "健康评分",
+    "cover_grade": "等级",
+    "exec_summary_heading": "执行摘要",
+    "exec_summary_critical_sentence": "{critical} 个严重问题和 {warning} 个警告，正在让您流失客户。",
+    "exec_summary_all_good_sentence": "没有发现严重问题——这个网站整体状态不错。下面这些是可以进一步优化的地方。",
+    "exec_summary_intro": "本报告以顾客——以及谷歌——实际体验网站的方式进行检测，并把每一项技术发现，翻译成清晰易懂的商业语言。",
+    "section_what_we_found": "我们发现了什么",
+    "section_why_it_matters": "这对您的生意意味着什么",
+    "section_what_you_get": "修复后您能获得什么",
+    "section_mobile_view": "手机端效果",
+    "section_desktop_view": "电脑端效果",
+    "severity_critical": "严重",
+    "severity_warning": "需要注意",
+    "severity_ok": "状况良好",
+    "next_steps_heading": "下一步该怎么做",
+    "next_steps_body": "以上问题都很常见，也都能解决，而且越早处理越好——每多拖一天，就多流失一天的访客和电话咨询。让我们一起把它修好。",
+    "next_steps_cta": "联系我们，安排您的网站升级。",
+    "footer_generated_by": "由 {brand_name} 使用 pitch-doctor 生成",
+    "toc_heading": "目录"
+  },
+  "checks": {
+    "load_speed": {
+      "name": "移动端加载速度",
+      "impact_critical": "您的网站在手机上要 {seconds} 秒才能显示出内容——超过一半的访客会在看到页面之前就离开。",
+      "impact_warning": "您的网站在手机上要 {seconds} 秒才能显示出内容。超过 3 秒之后，每多一秒都在悄悄流失访客。",
+      "impact_ok": "您的网站在手机上 {seconds} 秒内就能显示内容——速度足以留住访客。",
+      "found_critical": "在模拟的中端移动网络下，页面出现可见内容所用的时间：{seconds} 秒。",
+      "found_warning": "在模拟的中端移动网络下，页面出现可见内容所用的时间：{seconds} 秒。",
+      "found_ok": "在模拟的中端移动网络下，页面出现可见内容所用的时间：{seconds} 秒。",
+      "benefit": "更快的网站能让访客在页面上多停留一会儿，足够他们打电话、预约或下单——而不是直接点击返回。"
+    },
+    "ssl": {
+      "name": "SSL / HTTPS 安全性",
+      "impact_critical": "Chrome 和 Safari 会直接告诉您的客户这个网站\"不安全\"——对于任何准备留下电话号码、邮箱或银行卡信息的人来说，这是个明显的警示信号。",
+      "impact_warning": "您的 HTTPS 配置存在问题，可能会给部分访客触发安全警告。",
+      "impact_ok": "您的网站使用了 HTTPS，浏览器会显示客户期待看到的安全锁标志。",
+      "found_critical": "未找到有效的 SSL 证书。{detail}",
+      "found_warning": "SSL 已配置，但检测到一个问题。{detail}",
+      "found_ok": "已安装有效的 SSL 证书，并强制使用 HTTPS。",
+      "benefit": "安全锁标志能让谨慎的访客在读到您的内容之前就不会因为担心安全而直接离开。",
+      "detail_no_https": "该网站完全没有使用 HTTPS。",
+      "detail_invalid_cert": "{error}"
+    },
+    "mobile_rendering": {
+      "name": "移动端显示效果",
+      "impact_critical": "您的网站在手机屏幕上显示不正常——文字或按钮被裁切，或者访客需要左右滑动才能看清内容。而此刻，您的大部分访客正在用手机浏览。",
+      "impact_warning": "您的网站在手机上基本能用，但有一些细微的排版问题，让它看起来不够精致。",
+      "impact_ok": "您的网站在手机屏幕上适配得很好。",
+      "found_critical": "在 390x844 的移动端视口下检测到显示问题：{issues}。",
+      "found_warning": "在 390x844 的移动端视口下检测到轻微显示问题：{issues}。",
+      "found_ok": "页面在移动端（390x844）和桌面端（1440x900）视口下均显示正常。",
+      "benefit": "适配手机的排版能让访客真正看清您的菜单、价格或预约表单，而不用费力放大缩小。",
+      "issue_viewport": "缺少移动端视口（viewport）标签，导致手机把页面当作缩小版的电脑页面来显示",
+      "issue_overflow": "内容溢出屏幕边缘 {px} 像素，导致需要左右滑动才能看全"
+    },
+    "outdated_signals": {
+      "name": "内容过时信号",
+      "impact_critical": "您网站页脚显示的年份还停留在 {year} 年——客户看到会怀疑您是否还在营业，或者这个网站是否已经好几年没人打理了。",
+      "impact_warning": "您页脚显示的年份稍微有点旧，这会让一个原本不错的网站显得疏于打理。",
+      "impact_ok": "您的网站没有出现明显过时的日期信息。",
+      "found_critical": "在页脚中发现版权年份为 {year} 年。",
+      "found_warning": "在页脚中发现版权年份为 {year} 年。",
+      "found_ok": "页脚中未发现过时的版权年份。",
+      "benefit": "一个更新及时的页脚，会不动声色地向每一位访客传递\"我们在营业、在运营、在用心维护\"的信号。"
+    },
+    "broken_links": {
+      "name": "失效链接",
+      "impact_critical": "您网站上有 {count} 个链接指向了已经不存在的页面。每一个失效链接，都意味着一位访客碰壁而归，而不是找到了他们想要的内容。",
+      "impact_warning": "您网站上有 {count} 个链接指向了已经不存在的页面——值得花点时间清理一下。",
+      "impact_ok": "所检查的所有内部链接均正常可用。",
+      "found_critical": "共检查了 {checked} 个内部链接；其中 {count} 个返回了失效状态：{examples}。",
+      "found_warning": "共检查了 {checked} 个内部链接；其中 {count} 个返回了失效状态：{examples}。",
+      "found_ok": "共检查了 {checked} 个内部链接；没有发现失效链接。",
+      "benefit": "修复失效链接后，访客——以及谷歌——才能真正到达他们在您网站上想去的地方。"
+    },
+    "contact_friction": {
+      "name": "联系方式的使用障碍",
+      "impact_critical": "访客能看到您的电话号码，却无法直接点击拨打；或者找不到明显的邮箱或联系方式入口——在手机上，这往往就是\"客户打来电话\"和\"客户直接放弃\"之间的差别。",
+      "impact_warning": "对于用手机浏览的访客来说，联系您的生意比理想情况要多费一些周折。",
+      "impact_ok": "访客可以在任意页面上轻松拨打电话、发送邮件或找到您的联系方式。",
+      "found_critical": "发现以下联系方式问题：{issues}。",
+      "found_warning": "发现以下联系方式问题：{issues}。",
+      "found_ok": "电话号码可直接点击拨打，联系方式信息也很容易找到。",
+      "benefit": "一键拨打的电话链接和清晰的联系方式，能把随意浏览的访客，变成实实在在的电话和邮件咨询。",
+      "issue_phone_not_tappable": "电话号码只是纯文本显示，并非可点击拨打的 tel: 链接",
+      "issue_no_email": "没有可见的邮箱或联系方式链接",
+      "issue_no_address": "页面上未找到实体地址信息"
+    },
+    "search_visibility": {
+      "name": "基础搜索可见性",
+      "impact_critical": "您的网站缺少谷歌用来在本地搜索结果中展示网站所需的基础信息——附近搜索您所提供服务的客户，可能根本看不到您。",
+      "impact_warning": "您的网站缺少一些基础的搜索可见性设置，补上之后能让谷歌更容易推荐您的网站。",
+      "impact_ok": "谷歌所关注的基础要素（标题、描述、社交预览、结构化数据）均已齐备。",
+      "found_critical": "缺失项：{issues}。",
+      "found_warning": "缺失项：{issues}。",
+      "found_ok": "页面标题、meta 描述、Open Graph 标签、favicon 图标和结构化数据均已找到。",
+      "benefit": "补齐这些基础项，能帮助您的生意在附近客户搜索相关服务时真正被看到——而且看起来也更专业。",
+      "issue_title": "页面标题缺失或为空",
+      "issue_meta_description": "meta 描述缺失或为空",
+      "issue_og": "缺少 Open Graph 标签（用于 Facebook/WhatsApp 等平台的链接预览）",
+      "issue_favicon": "缺少 favicon（浏览器标签页图标）",
+      "issue_structured_data": "缺少 LocalBusiness 结构化数据（JSON-LD），谷歌无法据此识别本地商家信息"
+    },
+    "reachability": {
+      "name": "可访问性与在线状态",
+      "impact_critical": "本次扫描期间，您的网站完全无法访问。此刻任何点击您谷歌商家信息或分享链接的人，看到的都是错误页面，而不是您的生意。",
+      "impact_warning": "您的网站可以打开，但跳转链或域名不一致的问题增加了访问阻力，也可能让搜索引擎感到困惑。",
+      "impact_ok": "您的网站解析正常，没有不必要的跳转。",
+      "found_critical": "{detail}",
+      "found_warning": "{detail}",
+      "found_ok": "DNS 解析正常，网站返回状态码 {status}，且没有问题跳转。",
+      "benefit": "网站能够稳定访问，是不让客户在看到您的介绍之前就流失的最基本前提。",
+      "detail_unreachable": "网站无法访问：{error}",
+      "detail_dns_failure": "该域名的 DNS 未能成功解析。",
+      "detail_redirect_chain": "网站在完成加载前经过了 {hops} 次跳转。",
+      "detail_www_mismatch": "该域名的 www 和非 www 版本表现不一致。"
+    }
+  }
+}

@@ -39,12 +39,12 @@
   "checks": {
     "load_speed": {
       "name": "Mobile Load Speed",
-      "impact_critical": "Your site takes {seconds}s to load on a phone -- more than half of visitors leave before seeing it.",
-      "impact_warning": "Your site takes {seconds}s to load on a phone. Every extra second past 3 quietly costs you visitors.",
-      "impact_ok": "Your site loads in {seconds}s on a phone -- fast enough to keep visitors around.",
-      "found_critical": "Measured load time on a simulated mobile connection: {seconds} seconds.",
-      "found_warning": "Measured load time on a simulated mobile connection: {seconds} seconds.",
-      "found_ok": "Measured load time on a simulated mobile connection: {seconds} seconds.",
+      "impact_critical": "Your site takes {seconds}s to show anything on a phone -- more than half of visitors leave before seeing it.",
+      "impact_warning": "Your site takes {seconds}s to show anything on a phone. Every extra second past 3 quietly costs you visitors.",
+      "impact_ok": "Your site shows content in {seconds}s on a phone -- fast enough to keep visitors around.",
+      "found_critical": "Time until visible content appeared, on a simulated mid-range mobile connection: {seconds} seconds.",
+      "found_warning": "Time until visible content appeared, on a simulated mid-range mobile connection: {seconds} seconds.",
+      "found_ok": "Time until visible content appeared, on a simulated mid-range mobile connection: {seconds} seconds.",
       "benefit": "A faster site keeps more visitors on the page long enough to call, book, or buy -- instead of hitting the back button."
     },
     "ssl": {

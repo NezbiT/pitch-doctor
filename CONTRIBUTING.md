@@ -29,9 +29,9 @@ or browser calls belong in that function. Put any new data-gathering logic in
 `checks/runner.py` instead, so the check's decision logic stays unit-testable
 with static HTML fixtures (see `tests/fixtures/`).
 
-If you add a new check or change its copy, update **both**
-`pitch_doctor/i18n/en.json` and `pitch_doctor/i18n/es.json` -- a test asserts
-the two files have identical key sets.
+If you add a new check or change its copy, update **all four**
+`pitch_doctor/i18n/{en,es,fr,zh}.json` files -- a test asserts they all have
+identical key sets.
 
 ## Reporting bugs / suggesting features
 

@@ -13,7 +13,7 @@ business owner. No dev jargon. No Lighthouse-dump anxiety. Just "here's what's
 costing you customers, and here's what fixing it gets you."
 
 Scan it, brand it with your own name and contact info, send it, close the
-deal.
+deal. Reports render in English, Spanish, French, or Chinese.
 
 ## Demo
 
@@ -62,11 +62,26 @@ pitch-doctor scan https://example.com \
   --pdf
 ```
 
+### Web UI (optional)
+
+Prefer a search bar over a terminal? `pitch-doctor serve` launches a small
+local web app -- paste a URL, watch the scan progress live (DNS → fetch →
+mobile/desktop capture → links → scoring), and get redirected straight to
+the finished report:
+
+```bash
+pip install -e ".[web]"
+pitch-doctor serve   # http://127.0.0.1:8765
+```
+
+It calls the exact same scan engine as the CLI and writes reports to the
+same `--out` directory -- there's no separate code path to keep in sync.
+
 ### Flags
 
 | Flag | Default | Description |
 |---|---|---|
-| `--lang` | `en` | Report/CLI language: `en` or `es` |
+| `--lang` | `en` | Report/CLI language: `en`, `es`, `fr`, or `zh` |
 | `--out` | `reports/` | Output directory |
 | `--brand-name` | `Your Agency` | Name shown on the report cover and CTA |
 | `--brand-email` | _(none)_ | Contact email on the final CTA page |
@@ -89,7 +104,7 @@ described below.
 Each check returns a severity (`critical` / `warning` / `ok`), the evidence
 that led to it, and a business-language explanation of why it matters:
 
-1. **Load speed** -- mobile load time via Playwright navigation timing on a simulated mobile connection.
+1. **Load speed** -- time until visible content appears (First Contentful Paint), measured via Playwright on a simulated mid-range mobile connection. We deliberately measure *perceived* load time, not the browser's full `load` event -- the latter blocks on every slow third-party script/ad/tracker and can report numbers far worse than what a real visitor actually experiences.
 2. **SSL / HTTPS** -- missing HTTPS or an invalid certificate.
 3. **Mobile rendering** -- viewport meta tag, horizontal overflow, and side-by-side phone + desktop screenshots.
 4. **Outdated signals** -- stale copyright year in the footer.

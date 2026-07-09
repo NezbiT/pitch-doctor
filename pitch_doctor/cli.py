@@ -14,7 +14,7 @@ from rich.console import Console
 from rich.table import Table
 
 from pitch_doctor.checks.runner import build_scan_context, run_all_checks
-from pitch_doctor.i18n import load_strings
+from pitch_doctor.i18n import SUPPORTED_LANGUAGES, load_strings
 from pitch_doctor.models import ScanReport
 from pitch_doctor.report.builder import BrandInfo, write_report
 from pitch_doctor.scoring import score_and_grade
@@ -30,22 +30,32 @@ _MONTHS_ES = [
     "enero", "febrero", "marzo", "abril", "mayo", "junio",
     "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre",
 ]
+_MONTHS_FR = [
+    "janvier", "février", "mars", "avril", "mai", "juin",
+    "juillet", "août", "septembre", "octobre", "novembre", "décembre",
+]
 
 
 def _format_date(lang: str) -> str:
     now = datetime.now(UTC)
     if lang == "es":
         return f"{now.day} de {_MONTHS_ES[now.month - 1]} de {now.year}"
+    if lang == "fr":
+        return f"{now.day} {_MONTHS_FR[now.month - 1]} {now.year}"
+    if lang == "zh":
+        return f"{now.year}年{now.month}月{now.day}日"
     return now.strftime("%B %d, %Y")
 
 
 def _lang_callback(value: str) -> str:
-    if value not in ("en", "es"):
-        raise typer.BadParameter("Language must be 'en' or 'es'.")
+    if value not in SUPPORTED_LANGUAGES:
+        raise typer.BadParameter(f"Language must be one of: {', '.join(SUPPORTED_LANGUAGES)}.")
     return value
 
 
-LangOption = typer.Option("en", "--lang", callback=_lang_callback, help="Report language: en or es.")
+LangOption = typer.Option(
+    "en", "--lang", callback=_lang_callback, help="Report language: en, es, fr, or zh."
+)
 OutOption = typer.Option(Path("reports"), "--out", help="Output directory for reports.")
 BrandNameOption = typer.Option("Your Agency", "--brand-name", help="Freelancer/agency name shown on the report.")
 BrandEmailOption = typer.Option(None, "--brand-email", help="Freelancer contact email.")
@@ -180,6 +190,28 @@ def batch(
         else:
             table.add_row(url, str(scan_report.score), scan_report.grade, "ok")
     console.print(table)
+
+
+@app.command()
+def serve(
+    host: str = typer.Option("127.0.0.1", "--host", help="Bind address for the local web UI."),
+    port: int = typer.Option(8765, "--port", help="Port for the local web UI."),
+    out: Path = OutOption,
+) -> None:
+    """Launch a local web UI: a search bar wrapping the same scan engine as `scan`."""
+    try:
+        import uvicorn
+
+        from pitch_doctor.web.app import create_app
+    except ImportError:
+        console.print(
+            "[red]The web UI needs extra dependencies. Install them with:[/red]\n"
+            '  pip install -e ".[web]"'
+        )
+        raise typer.Exit(code=1) from None
+
+    console.print(f"[green]pitch-doctor web UI running at http://{host}:{port}[/green]")
+    uvicorn.run(create_app(out_dir=out), host=host, port=port)
 
 
 if __name__ == "__main__":

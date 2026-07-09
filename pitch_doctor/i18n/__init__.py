@@ -1,8 +1,8 @@
-"""Loads localized report/CLI strings from en.json / es.json.
+"""Loads localized report/CLI strings from en/es/fr/zh.json.
 
 No report or CLI copy is hardcoded in Python -- everything user-facing lives
-in these two JSON files so a translator can add a new language without
-touching code.
+in these JSON files so a translator can add a new language without touching
+code (add a new `<lang>.json` with the same key tree and list it below).
 """
 
 from __future__ import annotations
@@ -13,7 +13,7 @@ from pathlib import Path
 from typing import Any
 
 _I18N_DIR = Path(__file__).parent
-SUPPORTED_LANGUAGES = ("en", "es")
+SUPPORTED_LANGUAGES = ("en", "es", "fr", "zh")
 DEFAULT_LANGUAGE = "en"
 
 

@@ -39,12 +39,12 @@
   "checks": {
     "load_speed": {
       "name": "Velocidad de Carga Móvil",
-      "impact_critical": "Tu sitio tarda {seconds}s en cargar en un celular: más de la mitad de tus visitantes se van antes de verlo.",
-      "impact_warning": "Tu sitio tarda {seconds}s en cargar en un celular. Cada segundo extra por encima de 3 te cuesta visitantes en silencio.",
-      "impact_ok": "Tu sitio carga en {seconds}s en un celular: lo suficientemente rápido para retener a tus visitantes.",
-      "found_critical": "Tiempo de carga medido en una conexión móvil simulada: {seconds} segundos.",
-      "found_warning": "Tiempo de carga medido en una conexión móvil simulada: {seconds} segundos.",
-      "found_ok": "Tiempo de carga medido en una conexión móvil simulada: {seconds} segundos.",
+      "impact_critical": "Tu sitio tarda {seconds}s en mostrar algo en un celular: más de la mitad de tus visitantes se van antes de verlo.",
+      "impact_warning": "Tu sitio tarda {seconds}s en mostrar algo en un celular. Cada segundo extra por encima de 3 te cuesta visitantes en silencio.",
+      "impact_ok": "Tu sitio muestra contenido en {seconds}s en un celular: lo suficientemente rápido para retener a tus visitantes.",
+      "found_critical": "Tiempo hasta que apareció contenido visible, en una conexión móvil de gama media simulada: {seconds} segundos.",
+      "found_warning": "Tiempo hasta que apareció contenido visible, en una conexión móvil de gama media simulada: {seconds} segundos.",
+      "found_ok": "Tiempo hasta que apareció contenido visible, en una conexión móvil de gama media simulada: {seconds} segundos.",
       "benefit": "Un sitio más rápido mantiene a más visitantes en la página el tiempo suficiente para llamar, reservar o comprar, en vez de irse."
     },
     "ssl": {

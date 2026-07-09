@@ -12,10 +12,12 @@ import asyncio
 import base64
 import socket
 import time
+from collections.abc import Callable
 from urllib.parse import urljoin, urlparse
 
 import httpx
 from playwright.async_api import Browser, async_playwright
+from playwright.async_api import TimeoutError as PlaywrightTimeoutError
 
 from pitch_doctor.checks import ALL_CHECKS
 from pitch_doctor.checks.base import soupify
@@ -31,14 +33,39 @@ DESKTOP_VIEWPORT = {"width": 1440, "height": 900}
 MAX_LINKS_TO_CHECK = 25
 LINK_CHECK_CONCURRENCY = 8
 
-# Roughly "Slow 4G" -- fast enough to be realistic, slow enough that a heavy
-# site actually shows it.
+# A representative mid-range mobile connection (roughly "Regular 4G"), not a
+# worst-case one. Earlier versions throttled to Lighthouse's aggressive "Slow
+# 4G" profile (1.6 Mbps / 150ms latency) *and* waited for the browser's full
+# "load" event -- which blocks on every slow third-party script, ad, or
+# tracker. That combination produced numbers far worse than what a real
+# visitor on a decent connection actually experiences, since real visitors
+# perceive "loaded" when content paints, not when the last analytics beacon
+# finishes. We now throttle more realistically and measure First Contentful
+# Paint (see PAINT_TIMING_JS below) instead of the full load event.
 NETWORK_CONDITIONS = {
     "offline": False,
-    "downloadThroughput": 1.6 * 1024 * 1024 / 8,
-    "uploadThroughput": 750 * 1024 / 8,
-    "latency": 150,
+    "downloadThroughput": 4 * 1024 * 1024 / 8,
+    "uploadThroughput": 1.5 * 1024 * 1024 / 8,
+    "latency": 40,
 }
+
+# Reads the Paint Timing / Navigation Timing APIs from inside the page.
+# first-contentful-paint is what most closely matches a real visitor's sense
+# of "the page loaded" -- it fires when the browser paints the first text,
+# image, or non-white content, regardless of slow-loading background scripts.
+PAINT_TIMING_JS = """() => {
+    const nav = performance.getEntriesByType('navigation')[0];
+    const paint = performance.getEntriesByType('paint').find(
+        (e) => e.name === 'first-contentful-paint'
+    );
+    return {
+        fcp: paint ? paint.startTime : null,
+        domContentLoaded: nav ? nav.domContentLoadedEventEnd : null,
+    };
+}"""
+
+FCP_POLL_INTERVAL_SECONDS = 0.25
+FCP_MAX_WAIT_SECONDS = 5.0
 
 
 def normalize_url(url: str) -> str:
@@ -192,8 +219,26 @@ async def _capture_browser_signals(url: str, timeout: float) -> dict:
             await cdp.send("Network.emulateNetworkConditions", NETWORK_CONDITIONS)
 
             start = time.perf_counter()
-            await page.goto(url, wait_until="load", timeout=timeout * 1000)
-            result["load_time_seconds"] = time.perf_counter() - start
+            try:
+                await page.goto(url, wait_until="domcontentloaded", timeout=timeout * 1000)
+            except PlaywrightTimeoutError:
+                pass  # still try to read whatever painted and screenshot it below
+
+            fcp_seconds: float | None = None
+            timing: dict = {}
+            deadline = time.perf_counter() + min(FCP_MAX_WAIT_SECONDS, timeout)
+            while time.perf_counter() < deadline:
+                timing = await page.evaluate(PAINT_TIMING_JS)
+                if timing.get("fcp") is not None:
+                    fcp_seconds = timing["fcp"] / 1000
+                    break
+                await asyncio.sleep(FCP_POLL_INTERVAL_SECONDS)
+
+            if fcp_seconds is None and timing.get("domContentLoaded") is not None:
+                fcp_seconds = timing["domContentLoaded"] / 1000
+            if fcp_seconds is None:
+                fcp_seconds = time.perf_counter() - start
+            result["load_time_seconds"] = fcp_seconds
 
             result["viewport_meta_present"] = await page.evaluate(
                 "() => !!document.querySelector('meta[name=\"viewport\"]')"
@@ -207,7 +252,10 @@ async def _capture_browser_signals(url: str, timeout: float) -> dict:
 
             desktop_context = await browser.new_context(viewport=DESKTOP_VIEWPORT)
             desktop_page = await desktop_context.new_page()
-            await desktop_page.goto(url, wait_until="load", timeout=timeout * 1000)
+            try:
+                await desktop_page.goto(url, wait_until="load", timeout=timeout * 1000)
+            except PlaywrightTimeoutError:
+                pass  # best-effort screenshot of whatever rendered
             desktop_screenshot = await desktop_page.screenshot(full_page=False)
             result["desktop_screenshot_b64"] = base64.b64encode(desktop_screenshot).decode("ascii")
             await desktop_context.close()
@@ -216,11 +264,26 @@ async def _capture_browser_signals(url: str, timeout: float) -> dict:
     return result
 
 
-async def build_scan_context(url: str, timeout: float = 20.0) -> ScanContext:
+async def build_scan_context(
+    url: str,
+    timeout: float = 20.0,
+    on_progress: Callable[[str], None] | None = None,
+) -> ScanContext:
+    """Gathers a ScanContext. ``on_progress``, if given, is called synchronously
+    with one of: "dns", "http", "browser", "links" as each stage starts --
+    used by the web UI to show live scan progress.
+    """
+
+    def notify(stage: str) -> None:
+        if on_progress is not None:
+            on_progress(stage)
+
     url = normalize_url(url)
     hostname = urlparse(url).netloc.split(":")[0]
+    notify("dns")
     dns_resolves = await asyncio.to_thread(_resolves_dns, hostname)
 
+    notify("http")
     http_data = await _fetch_http(url, timeout) if dns_resolves else {"error": "DNS resolution failed"}
 
     html = http_data.get("html", "")
@@ -234,6 +297,7 @@ async def build_scan_context(url: str, timeout: float = 20.0) -> ScanContext:
         "viewport_meta_present": False,
     }
     if dns_resolves and not http_data.get("error"):
+        notify("browser")
         try:
             browser_signals = await _capture_browser_signals(url, timeout)
         except Exception as exc:  # noqa: BLE001 -- a browser failure must not abort the scan
@@ -242,6 +306,7 @@ async def build_scan_context(url: str, timeout: float = 20.0) -> ScanContext:
     internal_links = _extract_internal_links(html, final_url) if html else []
     broken_links, www_mismatch = ([], False)
     if dns_resolves and not http_data.get("error"):
+        notify("links")
         broken_links, www_mismatch = await asyncio.gather(
             _check_broken_links(internal_links, timeout),
             _check_www_mismatch(final_url, timeout),

@@ -56,6 +56,16 @@ def strings_es():
 
 
 @pytest.fixture
+def strings_fr():
+    return load_strings("fr")
+
+
+@pytest.fixture
+def strings_zh():
+    return load_strings("zh")
+
+
+@pytest.fixture
 def good_html():
     return load_fixture_html("good_site.html")
 

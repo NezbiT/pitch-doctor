@@ -30,9 +30,9 @@
       "name": "Mobile Load Speed",
       "severity": "ok",
       "evidence": [
-        "Measured load time on a simulated mobile connection: 0.3 seconds."
+        "Time until visible content appeared, on a simulated mid-range mobile connection: 0.3 seconds."
       ],
-      "impact": "Your site loads in 0.3s on a phone -- fast enough to keep visitors around.",
+      "impact": "Your site shows content in 0.3s on a phone -- fast enough to keep visitors around.",
       "recommendation": "A faster site keeps more visitors on the page long enough to call, book, or buy -- instead of hitting the back button.",
       "screenshots": []
     },
