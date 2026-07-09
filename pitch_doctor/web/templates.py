@@ -30,7 +30,11 @@ PAGE = """<!doctype html>
   @keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
   .eyebrow { font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: var(--emerald); font-weight: 700; margin-bottom: 10px; text-align: center; }
   h1 { font-size: 34px; margin: 0 0 6px; text-align: center; }
-  .tagline { color: var(--slate-300); text-align: center; margin-bottom: 32px; transition: opacity .2s; }
+  .tagline { color: var(--slate-300); text-align: center; margin-bottom: 6px; transition: opacity .2s; }
+  .subheading {
+    color: var(--emerald); text-align: center; margin-bottom: 32px; font-size: 13px;
+    font-weight: 700; text-transform: uppercase; letter-spacing: .05em; transition: opacity .2s;
+  }
   form { display: flex; flex-direction: column; gap: 14px; }
   .search-row {
     display: flex; gap: 10px; background: rgba(255,255,255,.06);
@@ -95,6 +99,7 @@ PAGE = """<!doctype html>
     <div class="eyebrow">pitch-doctor</div>
     <h1>pitch-doctor</h1>
     <div class="tagline" id="tagline"></div>
+    <div class="subheading" id="subheading"></div>
 
     <div id="error-slot"></div>
 
@@ -159,6 +164,7 @@ function applyCopy() {
   const c = t(langSelect.value);
   document.documentElement.lang = langSelect.value;
   document.getElementById('tagline').textContent = c.heading;
+  document.getElementById('subheading').textContent = c.subheading;
   document.getElementById('url-input').placeholder = c.placeholder;
   document.getElementById('submit-btn').textContent = c.cta;
   document.getElementById('advanced-label').textContent = c.advanced_label;
