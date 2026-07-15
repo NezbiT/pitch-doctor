@@ -4,7 +4,7 @@
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-10b981.svg)](LICENSE)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-10b981.svg)](pyproject.toml)
-[![CI](https://github.com/pitch-doctor/pitch-doctor/actions/workflows/ci.yml/badge.svg)](.github/workflows/ci.yml)
+[![CI](https://github.com/NezbiT/pitch-doctor/actions/workflows/ci.yml/badge.svg)](.github/workflows/ci.yml)
 
 `pitch-doctor` is a CLI for web freelancers. Point it at a local business's
 website and it produces a client-ready, plain-English audit report -- as a
@@ -148,16 +148,55 @@ assets, opens offline, emails cleanly as an attachment). Pass `--pdf` to also
 render that same HTML to PDF using the headless Chromium instance Playwright
 already ships with (`page.pdf()`) -- no extra system dependencies required.
 
+## Deploy the web UI (free)
+
+This is a **single Python service** (FastAPI UI + scan engine + Playwright).
+There is no separate static frontend — **Vercel is not a good fit** (serverless
+timeouts, no long-lived Chromium).
+
+Recommended free host: **[Render](https://render.com)** (Docker web service).
+
+1. Push this repo to GitHub.
+2. In Render: **New → Blueprint** (uses `render.yaml`) or **New → Web Service**
+   with Docker runtime.
+3. After deploy, attach a custom domain (e.g. `test.mariosalvarez.com`):
+   - Render → service → **Settings → Custom Domains**
+   - At your DNS: CNAME `test` → the hostname Render gives you
+     (e.g. `pitch-doctor.onrender.com`).
+
+Environment variables used in production:
+
+| Variable | Value | Purpose |
+|---|---|---|
+| `PLAYWRIGHT_CHANNEL` | `chromium` | Use Playwright's bundled browser (not system Chrome) |
+| `PLAYWRIGHT_NO_SANDBOX` | `1` | Required inside most containers |
+| `PORT` | set by host | Listen port |
+
+Local Docker:
+
+```bash
+docker build -t pitch-doctor .
+docker run --rm -p 8765:8765 pitch-doctor
+# open http://localhost:8765
+```
+
+**Free-tier caveats:** cold starts after idle, and 512 MB RAM can OOM on heavy
+scans — upgrade the plan if Chromium is killed.
+
+Alternatives (also free/credit-based, Docker-friendly): [Fly.io](https://fly.io),
+[Railway](https://railway.app), [Koyeb](https://www.koyeb.com).
+
 ## Project layout
 
 ```
 pitch_doctor/
-  cli.py              Typer app: scan / batch commands
+  cli.py              Typer app: scan / batch / serve
   models.py            CheckResult, ScanContext, ScanReport
   scoring.py            Health score formula
   checks/               One module per check (pure decision logic) + runner.py (I/O)
   report/               Jinja2 template + HTML/PDF builder
-  i18n/                 en.json / es.json -- all report and CLI copy
+  web/                  FastAPI search UI wrapping the same scan engine
+  i18n/                 en/es/fr/zh -- all report and CLI copy
 tests/                  Offline unit tests with static HTML fixtures
 ```
 

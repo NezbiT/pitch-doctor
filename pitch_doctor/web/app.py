@@ -35,7 +35,7 @@ COPY: dict[str, dict] = {
     "en": {
         "heading": "Turn any bad website into your next client.",
         "subheading": "Qualify your website in 30 seconds.",
-        "placeholder": "https://your-prospect-site.com",
+        "placeholder": "your-prospect-site.com",
         "cta": "Scan",
         "advanced_label": "Branding & language",
         "lang_label": "Report language",
@@ -58,7 +58,7 @@ COPY: dict[str, dict] = {
     "es": {
         "heading": "Convierte cualquier sitio web deficiente en tu próximo cliente.",
         "subheading": "Califica tu sitio web en 30 segundos.",
-        "placeholder": "https://sitio-del-prospecto.com",
+        "placeholder": "sitio-del-prospecto.com",
         "cta": "Analizar",
         "advanced_label": "Marca e idioma",
         "lang_label": "Idioma del reporte",
@@ -81,7 +81,7 @@ COPY: dict[str, dict] = {
     "fr": {
         "heading": "Transformez n'importe quel site web bâclé en votre prochain client.",
         "subheading": "Évaluez un site web en 30 secondes.",
-        "placeholder": "https://site-du-prospect.com",
+        "placeholder": "site-du-prospect.com",
         "cta": "Analyser",
         "advanced_label": "Marque et langue",
         "lang_label": "Langue du rapport",
@@ -104,7 +104,7 @@ COPY: dict[str, dict] = {
     "zh": {
         "heading": "把任何一个糟糕的网站，变成你的下一个客户。",
         "subheading": "30 秒，评估你的网站。",
-        "placeholder": "https://潜在客户的网站.com",
+        "placeholder": "潜在客户的网站.com",
         "cta": "开始扫描",
         "advanced_label": "品牌与语言",
         "lang_label": "报告语言",

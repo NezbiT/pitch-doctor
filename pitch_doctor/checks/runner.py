@@ -19,6 +19,8 @@ import httpx
 from playwright.async_api import Browser, async_playwright
 from playwright.async_api import TimeoutError as PlaywrightTimeoutError
 
+from pitch_doctor.browser_launch import chromium_launch_kwargs
+
 from pitch_doctor.checks import ALL_CHECKS
 from pitch_doctor.checks.base import soupify
 from pitch_doctor.i18n import Strings
@@ -202,7 +204,7 @@ async def _capture_browser_signals(url: str, timeout: float) -> dict:
         "viewport_meta_present": False,
     }
     async with async_playwright() as pw:
-        browser: Browser = await pw.chromium.launch(channel="chrome")
+        browser: Browser = await pw.chromium.launch(**chromium_launch_kwargs())
         try:
             mobile_context = await browser.new_context(
                 viewport=MOBILE_VIEWPORT,

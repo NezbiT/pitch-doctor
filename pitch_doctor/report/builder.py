@@ -155,8 +155,10 @@ def _slugify(url: str) -> str:
 def _render_pdf(html_path: Path, pdf_path: Path) -> None:
     from playwright.sync_api import sync_playwright
 
+    from pitch_doctor.browser_launch import chromium_launch_kwargs
+
     with sync_playwright() as pw:
-        browser = pw.chromium.launch(channel="chrome")
+        browser = pw.chromium.launch(**chromium_launch_kwargs())
         try:
             page = browser.new_page()
             page.goto(html_path.resolve().as_uri())

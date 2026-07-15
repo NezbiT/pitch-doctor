@@ -47,8 +47,8 @@ web = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/pitch-doctor/pitch-doctor"
-Issues = "https://github.com/pitch-doctor/pitch-doctor/issues"
+Homepage = "https://github.com/NezbiT/pitch-doctor"
+Issues = "https://github.com/NezbiT/pitch-doctor/issues"
 
 [project.scripts]
 pitch-doctor = "pitch_doctor.cli:app"

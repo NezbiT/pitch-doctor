@@ -1,0 +1,20 @@
+# Deploy the full pitch-doctor web UI (FastAPI + Playwright) on Render.
+# Dashboard: New → Blueprint → connect this repo, or:
+#   https://dashboard.render.com/select-repo?type=blueprint
+#
+# Free plan notes:
+# - Service sleeps after ~15 min of inactivity (first request is cold).
+# - 512 MB RAM can be tight for Chromium; if scans OOM, upgrade to Starter.
+# - Custom domain (e.g. test.mariosalvarez.com) is free on Render.
+
+services:
+  - type: web
+    name: pitch-doctor
+    runtime: docker
+    plan: free
+    healthCheckPath: /
+    envVars:
+      - key: PLAYWRIGHT_CHANNEL
+        value: chromium
+      - key: PLAYWRIGHT_NO_SANDBOX
+        value: "1"

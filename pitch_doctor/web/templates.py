@@ -19,8 +19,10 @@ PAGE = """<!doctype html>
     --slate-100: #f1f5f9; --emerald: #10b981; --emerald-dim: rgba(16,185,129,.16);
     --red: #ef4444; --amber: #f59e0b;
     --font: -apple-system, "Segoe UI", "Inter", Roboto, Helvetica, Arial, sans-serif;
+    color-scheme: dark;
   }
   * { box-sizing: border-box; }
+  input, button, select, textarea { font-family: inherit; }
   body {
     margin: 0; min-height: 100vh; font-family: var(--font);
     background: radial-gradient(circle at 30% 0%, #142238 0%, var(--slate-950) 45%, #060a14 100%);
@@ -37,17 +39,42 @@ PAGE = """<!doctype html>
   }
   form { display: flex; flex-direction: column; gap: 14px; }
   .search-row {
-    display: flex; gap: 10px; background: rgba(255,255,255,.06);
+    display: flex; align-items: center; gap: 0; background: rgba(255,255,255,.06);
     border: 1px solid rgba(255,255,255,.12); border-radius: 999px; padding: 6px 6px 6px 22px;
     transition: border-color .2s, box-shadow .2s;
   }
   .search-row:focus-within { border-color: var(--emerald); box-shadow: 0 0 0 3px var(--emerald-dim); }
-  .search-row input[type=url] { flex: 1; background: none; border: none; outline: none; color: #fff; font-size: 16px; }
-  .search-row input[type=url]::placeholder { color: var(--slate-500); }
+  .url-prefix { color: var(--slate-500); font-size: 16px; white-space: nowrap; user-select: none; transition: color .15s; }
+  .search-row:focus-within .url-prefix { color: #fff; }
+  .search-row input[type=text] {
+    flex: 1; min-width: 0; background: transparent; border: none; outline: none;
+    color: #fff; font-size: 16px; padding: 0 0 0 2px; -webkit-appearance: none; appearance: none;
+  }
+  .search-row input[type=text]::placeholder { color: var(--slate-500); }
+  /* Chrome/Edge force a light "autofill" background + dark text on inputs;
+     override both so it can't flash white against this dark theme. */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    -webkit-text-fill-color: #fff;
+    caret-color: #fff;
+    -webkit-box-shadow: 0 0 0px 1000px rgba(255,255,255,.06) inset;
+    box-shadow: 0 0 0px 1000px rgba(255,255,255,.06) inset;
+    transition: background-color 9999s ease-in-out 0s;
+  }
+  .fields input:-webkit-autofill,
+  .fields input:-webkit-autofill:hover,
+  .fields input:-webkit-autofill:focus,
+  .fields input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0px 1000px rgba(255,255,255,.05) inset;
+    box-shadow: 0 0 0px 1000px rgba(255,255,255,.05) inset;
+  }
   button {
     background: var(--emerald); color: #04231a; border: none; border-radius: 999px;
     padding: 12px 26px; font-size: 15px; font-weight: 700; cursor: pointer;
-    transition: filter .15s, transform .1s;
+    transition: filter .15s, transform .1s; -webkit-appearance: none; appearance: none;
+    flex: none;
   }
   button:hover { filter: brightness(1.08); }
   button:active { transform: scale(.97); }
@@ -58,7 +85,8 @@ PAGE = """<!doctype html>
   .fields label { font-size: 12px; color: var(--slate-500); display: block; margin-bottom: 4px; }
   .fields input, .fields select {
     width: 100%; padding: 9px 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,.15);
-    background: rgba(255,255,255,.05); color: #fff; font-size: 14px; font-family: inherit;
+    background: rgba(255,255,255,.05); color: #fff; font-size: 14px;
+    -webkit-appearance: none; appearance: none;
   }
   .fields select option { color: #000; }
   .error-box {
@@ -105,7 +133,19 @@ PAGE = """<!doctype html>
 
     <form id="scan-form">
       <div class="search-row">
-        <input type="url" name="url" id="url-input" required autofocus>
+        <span class="url-prefix">https://</span>
+        <input
+          type="text"
+          name="url"
+          id="url-input"
+          inputmode="url"
+          autocomplete="off"
+          autocorrect="off"
+          autocapitalize="off"
+          spellcheck="false"
+          required
+          autofocus
+        >
         <button type="submit" id="submit-btn"></button>
       </div>
       <details>
@@ -159,6 +199,14 @@ const stageList = document.getElementById('stage-list');
 const errorSlot = document.getElementById('error-slot');
 
 function t(lang) { return COPY[lang] || COPY.en; }
+
+// The visible "https://" is a static prefix, not part of the input's value,
+// so the client only ever has to type "website.com". If they paste a full
+// URL anyway (with its own scheme), respect it as-is.
+function withScheme(raw) {
+  const value = raw.trim();
+  return /^https?:\/\//i.test(value) ? value : 'https://' + value;
+}
 
 function applyCopy() {
   const c = t(langSelect.value);
@@ -241,7 +289,7 @@ form.addEventListener('submit', async function (evt) {
   submitBtn.textContent = c.scanning_label;
 
   const payload = {
-    url: urlInput.value,
+    url: withScheme(urlInput.value),
     lang: langSelect.value,
     brand_name: document.getElementById('brand-name-input').value,
     brand_email: document.getElementById('brand-email-input').value,
