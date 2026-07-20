@@ -1,6 +1,6 @@
 # Playwright's official Python image includes Chromium + system deps.
 # Pin the tag close to the playwright package version you install.
-FROM mcr.microsoft.com/playwright/python:v1.49.1-jammy
+FROM mcr.microsoft.com/playwright/python:v1.49.1-noble
 
 WORKDIR /app
 
