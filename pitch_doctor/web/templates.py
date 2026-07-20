@@ -154,7 +154,7 @@ PAGE = """<!doctype html>
         >
         <button type="submit" id="submit-btn"></button>
       </div>
-      <details>
+      <details open>
         <summary id="advanced-label"></summary>
         <div class="fields">
           <div>

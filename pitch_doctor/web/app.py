@@ -42,7 +42,7 @@ COPY: dict[str, dict] = {
         "brand_name_label": "Your name",
         "brand_email_label": "Contact email",
         "brand_phone_label": "Contact phone",
-        "contact_cta": "Update or Create Your Website Professionally",
+        "contact_cta": "Update or Build Your Website with a Professional",
         "footer": "",
         "scanning_label": "Scanning…",
         "error_heading": "Couldn't finish that scan",

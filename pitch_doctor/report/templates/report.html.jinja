@@ -131,9 +131,17 @@
   .cta-box .cta-subline { font-size: 18px; font-weight: 600; }
   .cta-contacts { display: flex; gap: 26px; font-size: 14px; font-weight: 600; flex-wrap: wrap; justify-content: center; }
 
+  /* ---------- Report footer actions ---------- */
+  .report-footer { background: var(--slate-900); padding: 30px; text-align: center; display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+  .action-btn { background: var(--emerald); color: #04231a; border: none; padding: 12px 28px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; text-decoration: none; }
+  .action-btn:hover { filter: brightness(1.08); }
+  .action-btn.secondary { background: var(--slate-700); color: #fff; }
+  .action-btn.secondary:hover { background: var(--slate-600); }
+
   @media print {
     body { background: #fff; }
     .page { box-shadow: none; }
+    .report-footer { display: none; }
   }
 </style>
 </head>
@@ -239,15 +247,24 @@
     <div class="cta-heading">{{ t.next_steps_heading }}</div>
     <div class="cta-body">{{ t.next_steps_body }}</div>
     <a href="https://zerodigitx.com/contact" class="cta-box" style="display: block; text-decoration: none; color: inherit;">
-      <div class="cta-line">{{ t.next_steps_cta }}</div>
-      <div class="cta-subline">talk to Mario at zerodigitx.com</div>
-      <div class="cta-contacts">
-        <span>{{ brand.name }}</span>
-        {% if brand.email %}<span>{{ brand.email }}</span>{% endif %}
-        {% if brand.phone %}<span>{{ brand.phone }}</span>{% endif %}
-      </div>
+      <p class="cta-line">Talk to Mario at Zero Digit X for updating your website</p>
     </a>
   </section>
+
+  <div class="report-footer">
+    <button class="action-btn" onclick="window.print()">📄 Download as PDF</button>
+    <button class="action-btn secondary" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">⬆ Back to Top</button>
+  </div>
+
+  <script>
+    // Allow PDF download using browser print functionality
+    window.addEventListener('keydown', function(e) {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+        e.preventDefault();
+        window.print();
+      }
+    });
+  </script>
 
 </body>
 </html>
