@@ -243,7 +243,7 @@ applyCopy();
 // Phone number formatting: xxx-xxx-xxxx
 const phoneInput = document.getElementById('brand-phone-input');
 phoneInput.addEventListener('input', function (e) {
-  let value = e.target.value.replace(/\\D/g, '');
+  let value = e.target.value.replace(/[^0-9]/g, '');
   if (value.length > 10) value = value.slice(0, 10);
   if (value.length >= 6) {
     e.target.value = value.slice(0, 3) + '-' + value.slice(3, 6) + '-' + value.slice(6);
@@ -254,7 +254,7 @@ phoneInput.addEventListener('input', function (e) {
   }
 });
 phoneInput.addEventListener('blur', function (e) {
-  const phoneRegex = /^\\d{3}-\\d{3}-\\d{4}$/;
+  const phoneRegex = /^[0-9]{3}-[0-9]{3}-[0-9]{4}$/;
   if (e.target.value && !phoneRegex.test(e.target.value)) {
     e.target.classList.add('invalid');
   } else {
