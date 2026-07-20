@@ -13,7 +13,7 @@ CHECK_ID = "security_headers"
 
 
 def evaluate(ctx: ScanContext, strings: Strings) -> CheckResult:
-    headers = ctx.response_headers or {}
+    headers = ctx.headers or {}
 
     missing_headers = []
     if not any(h in headers for h in ["x-frame-options", "X-Frame-Options"]):

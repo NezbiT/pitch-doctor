@@ -13,7 +13,7 @@ CHECK_ID = "performance_optimization"
 
 
 def evaluate(ctx: ScanContext, strings: Strings) -> CheckResult:
-    headers = ctx.response_headers or {}
+    headers = ctx.headers or {}
     html = ctx.html or ""
 
     optimization_issues = []
