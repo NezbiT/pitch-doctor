@@ -237,14 +237,14 @@
   <section class="page cta-page">
     <div class="cta-heading">{{ t.next_steps_heading }}</div>
     <div class="cta-body">{{ t.next_steps_body }}</div>
-    <div class="cta-box">
+    <a href="https://zerodigitx.com/contact" class="cta-box" style="display: block; text-decoration: none; color: inherit;">
       <div class="cta-line">{{ t.next_steps_cta }}</div>
       <div class="cta-contacts">
         <span>{{ brand.name }}</span>
         {% if brand.email %}<span>{{ brand.email }}</span>{% endif %}
         {% if brand.phone %}<span>{{ brand.phone }}</span>{% endif %}
       </div>
-    </div>
+    </a>
   </section>
 
 </body>
