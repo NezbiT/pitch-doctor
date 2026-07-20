@@ -34,14 +34,15 @@ _SAFE_FILENAME = re.compile(r"[A-Za-z0-9_.-]+\.html")
 COPY: dict[str, dict] = {
     "en": {
         "heading": "Turn any bad website into your next client.",
-        "subheading": "Qualify your website in 30 seconds.",
-        "placeholder": "your-prospect-site.com",
+        "subheading": "Scan and qualify prospects in 30 seconds.",
+        "placeholder": "example.com",
         "cta": "Scan",
-        "advanced_label": "Branding & language",
+        "advanced_label": "Your information",
         "lang_label": "Report language",
-        "brand_name_label": "Your agency name",
+        "brand_name_label": "Your name",
         "brand_email_label": "Contact email",
         "brand_phone_label": "Contact phone",
+        "contact_cta": "Update or Create Your Website Professionally",
         "footer": "Runs locally. Reports are saved to disk, same as the CLI.",
         "scanning_label": "Scanning…",
         "error_heading": "Couldn't finish that scan",
@@ -57,14 +58,15 @@ COPY: dict[str, dict] = {
     },
     "es": {
         "heading": "Convierte cualquier sitio web deficiente en tu próximo cliente.",
-        "subheading": "Califica tu sitio web en 30 segundos.",
-        "placeholder": "sitio-del-prospecto.com",
+        "subheading": "Escanea y califica prospectos en 30 segundos.",
+        "placeholder": "ejemplo.com",
         "cta": "Analizar",
-        "advanced_label": "Marca e idioma",
+        "advanced_label": "Tu información",
         "lang_label": "Idioma del reporte",
-        "brand_name_label": "Nombre de tu agencia",
+        "brand_name_label": "Tu nombre",
         "brand_email_label": "Correo de contacto",
         "brand_phone_label": "Teléfono de contacto",
+        "contact_cta": "Actualiza o Crea Tu Sitio Web de Forma Profesional",
         "footer": "Corre localmente. Los reportes se guardan en disco, igual que la CLI.",
         "scanning_label": "Analizando…",
         "error_heading": "No se pudo completar el análisis",
@@ -80,14 +82,15 @@ COPY: dict[str, dict] = {
     },
     "fr": {
         "heading": "Transformez n'importe quel site web bâclé en votre prochain client.",
-        "subheading": "Évaluez un site web en 30 secondes.",
-        "placeholder": "site-du-prospect.com",
+        "subheading": "Analysez et qualifiez les prospects en 30 secondes.",
+        "placeholder": "exemple.com",
         "cta": "Analyser",
-        "advanced_label": "Marque et langue",
+        "advanced_label": "Vos informations",
         "lang_label": "Langue du rapport",
-        "brand_name_label": "Nom de votre agence",
+        "brand_name_label": "Votre nom",
         "brand_email_label": "E-mail de contact",
         "brand_phone_label": "Téléphone de contact",
+        "contact_cta": "Mettez à Jour ou Créez Votre Site Web de Manière Professionnelle",
         "footer": "Fonctionne localement. Les rapports sont enregistrés sur disque, comme avec la CLI.",
         "scanning_label": "Analyse en cours…",
         "error_heading": "L'analyse n'a pas pu aboutir",
@@ -101,38 +104,15 @@ COPY: dict[str, dict] = {
             "report": "Calcul du score et génération du rapport",
         },
     },
-    "zh": {
-        "heading": "把任何一个糟糕的网站，变成你的下一个客户。",
-        "subheading": "30 秒，评估你的网站。",
-        "placeholder": "潜在客户的网站.com",
-        "cta": "开始扫描",
-        "advanced_label": "品牌与语言",
-        "lang_label": "报告语言",
-        "brand_name_label": "您的工作室/机构名称",
-        "brand_email_label": "联系邮箱",
-        "brand_phone_label": "联系电话",
-        "footer": "本工具在本地运行。报告会保存到磁盘，与命令行版本一致。",
-        "scanning_label": "扫描中…",
-        "error_heading": "本次扫描未能完成",
-        "progress_note": "通常需要 10-30 秒。",
-        "redirecting": "完成！正在打开您的报告…",
-        "stages": {
-            "dns": "正在检查 DNS 与可访问性",
-            "http": "正在抓取页面并检查 SSL",
-            "browser": "正在加载移动端与桌面端，截取页面截图",
-            "links": "正在检查链接与联系方式",
-            "report": "正在计算评分并生成报告",
-        },
-    },
 }
 
 
 class ScanRequest(BaseModel):
     url: str
     lang: str = "en"
-    brand_name: str = "Your Agency"
-    brand_email: str = ""
-    brand_phone: str = ""
+    brand_name: str
+    brand_email: str
+    brand_phone: str
 
 
 @dataclass

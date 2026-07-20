@@ -11,7 +11,7 @@ PAGE = """<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>pitch-doctor</title>
+<title>Pitch Doctor</title>
 <style>
   :root {
     --slate-950: #0b1220; --slate-900: #0f172a; --slate-800: #1e293b;
@@ -30,7 +30,6 @@ PAGE = """<!doctype html>
   }
   .card { width: 100%; max-width: 640px; animation: rise .5s ease; }
   @keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
-  .eyebrow { font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: var(--emerald); font-weight: 700; margin-bottom: 10px; text-align: center; }
   h1 { font-size: 34px; margin: 0 0 6px; text-align: center; }
   .tagline { color: var(--slate-300); text-align: center; margin-bottom: 6px; transition: opacity .2s; }
   .subheading {
@@ -44,8 +43,6 @@ PAGE = """<!doctype html>
     transition: border-color .2s, box-shadow .2s;
   }
   .search-row:focus-within { border-color: var(--emerald); box-shadow: 0 0 0 3px var(--emerald-dim); }
-  .url-prefix { color: var(--slate-500); font-size: 16px; white-space: nowrap; user-select: none; transition: color .15s; }
-  .search-row:focus-within .url-prefix { color: #fff; }
   .search-row input[type=text] {
     flex: 1; min-width: 0; background: transparent; border: none; outline: none;
     color: #fff; font-size: 16px; padding: 0 0 0 2px; -webkit-appearance: none; appearance: none;
@@ -88,12 +85,23 @@ PAGE = """<!doctype html>
     background: rgba(255,255,255,.05); color: #fff; font-size: 14px;
     -webkit-appearance: none; appearance: none;
   }
+  .fields input.invalid {
+    border-color: var(--red); box-shadow: 0 0 0 3px rgba(239,68,68,.12);
+  }
   .fields select option { color: #000; }
   .error-box {
     background: rgba(239,68,68,.12); border: 1px solid rgba(239,68,68,.4); color: #fecaca;
     border-radius: 10px; padding: 14px 18px; margin-bottom: 20px; animation: rise .3s ease;
   }
   .footer-note { text-align: center; color: var(--slate-500); font-size: 12px; margin-top: 22px; }
+  .contact-cta {
+    display: inline-block; width: 100%; margin-top: 32px; padding: 18px 32px;
+    background: var(--emerald); color: #04231a; border: none; border-radius: 12px;
+    font-size: 16px; font-weight: 700; cursor: pointer; text-align: center; text-decoration: none;
+    transition: filter .15s, transform .1s; -webkit-appearance: none; appearance: none;
+  }
+  .contact-cta:hover { filter: brightness(1.08); }
+  .contact-cta:active { transform: scale(.97); }
 
   /* ---------- Progress panel ---------- */
   #progress-panel { display: none; }
@@ -124,8 +132,7 @@ PAGE = """<!doctype html>
 </head>
 <body>
   <div class="card">
-    <div class="eyebrow">pitch-doctor</div>
-    <h1>pitch-doctor</h1>
+    <h1>Pitch Doctor</h1>
     <div class="tagline" id="tagline"></div>
     <div class="subheading" id="subheading"></div>
 
@@ -133,7 +140,6 @@ PAGE = """<!doctype html>
 
     <form id="scan-form">
       <div class="search-row">
-        <span class="url-prefix">https://</span>
         <input
           type="text"
           name="url"
@@ -157,20 +163,19 @@ PAGE = """<!doctype html>
               <option value="en">English</option>
               <option value="es">Español</option>
               <option value="fr">Français</option>
-              <option value="zh">中文</option>
             </select>
           </div>
           <div>
             <label id="brand-name-label"></label>
-            <input type="text" name="brand_name" id="brand-name-input" value="Your Agency">
+            <input type="text" name="brand_name" id="brand-name-input" required>
           </div>
           <div>
             <label id="brand-email-label"></label>
-            <input type="email" name="brand_email" id="brand-email-input">
+            <input type="email" name="brand_email" id="brand-email-input" required>
           </div>
           <div>
             <label id="brand-phone-label"></label>
-            <input type="text" name="brand_phone" id="brand-phone-input">
+            <input type="tel" name="brand_phone" id="brand-phone-input" placeholder="xxx-xxx-xxxx" required>
           </div>
         </div>
       </details>
@@ -183,6 +188,7 @@ PAGE = """<!doctype html>
     </div>
 
     <div class="footer-note" id="footer-note"></div>
+    <a href="https://zerodigitx.com" class="contact-cta" id="contact-cta"></a>
   </div>
 
 <script>
@@ -200,12 +206,11 @@ const errorSlot = document.getElementById('error-slot');
 
 function t(lang) { return COPY[lang] || COPY.en; }
 
-// The visible "https://" is a static prefix, not part of the input's value,
-// so the client only ever has to type "website.com". If they paste a full
-// URL anyway (with its own scheme), respect it as-is.
+// If user pastes a full URL, use it as-is. Otherwise, let the backend
+// handle DNS resolution (trying both domain.com and www.domain.com).
 function withScheme(raw) {
   const value = raw.trim();
-  return /^https?:\/\//i.test(value) ? value : 'https://' + value;
+  return /^https?:\/\//i.test(value) ? value : value;
 }
 
 function applyCopy() {
@@ -221,6 +226,7 @@ function applyCopy() {
   document.getElementById('brand-email-label').textContent = c.brand_email_label;
   document.getElementById('brand-phone-label').textContent = c.brand_phone_label;
   document.getElementById('footer-note').textContent = c.footer;
+  document.getElementById('contact-cta').textContent = c.contact_cta;
   renderStageList(c);
 }
 
@@ -233,6 +239,28 @@ function renderStageList(c) {
 
 langSelect.addEventListener('change', applyCopy);
 applyCopy();
+
+// Phone number formatting: xxx-xxx-xxxx
+const phoneInput = document.getElementById('brand-phone-input');
+phoneInput.addEventListener('input', function (e) {
+  let value = e.target.value.replace(/\\D/g, '');
+  if (value.length > 10) value = value.slice(0, 10);
+  if (value.length >= 6) {
+    e.target.value = value.slice(0, 3) + '-' + value.slice(3, 6) + '-' + value.slice(6);
+  } else if (value.length >= 3) {
+    e.target.value = value.slice(0, 3) + '-' + value.slice(3);
+  } else {
+    e.target.value = value;
+  }
+});
+phoneInput.addEventListener('blur', function (e) {
+  const phoneRegex = /^\\d{3}-\\d{3}-\\d{4}$/;
+  if (e.target.value && !phoneRegex.test(e.target.value)) {
+    e.target.classList.add('invalid');
+  } else {
+    e.target.classList.remove('invalid');
+  }
+});
 
 function setStage(stageKey) {
   const idx = STAGES.indexOf(stageKey);

@@ -84,6 +84,17 @@ def _resolves_dns(hostname: str) -> bool:
         return False
 
 
+def _resolve_dns_with_www_fallback(hostname: str) -> tuple[str, bool]:
+    """Try to resolve hostname, then try www.hostname if the first fails."""
+    if _resolves_dns(hostname):
+        return hostname, True
+    if not hostname.startswith("www."):
+        www_hostname = f"www.{hostname}"
+        if _resolves_dns(www_hostname):
+            return www_hostname, True
+    return hostname, False
+
+
 def _same_site(base_netloc: str, candidate: str) -> bool:
     parsed = urlparse(candidate)
     if parsed.scheme not in ("http", "https", ""):
@@ -283,7 +294,11 @@ async def build_scan_context(
     url = normalize_url(url)
     hostname = urlparse(url).netloc.split(":")[0]
     notify("dns")
-    dns_resolves = await asyncio.to_thread(_resolves_dns, hostname)
+    resolved_hostname, dns_resolves = await asyncio.to_thread(
+        _resolve_dns_with_www_fallback, hostname
+    )
+    if resolved_hostname != hostname:
+        url = url.replace(f"://{hostname}", f"://{resolved_hostname}")
 
     notify("http")
     http_data = await _fetch_http(url, timeout) if dns_resolves else {"error": "DNS resolution failed"}
