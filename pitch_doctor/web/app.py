@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Literal
 
 from fastapi import FastAPI
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 from pydantic import BaseModel
 
 from pitch_doctor.checks.runner import build_scan_context, run_all_checks
@@ -23,10 +23,12 @@ from pitch_doctor.cli import _format_date
 from pitch_doctor.i18n import SUPPORTED_LANGUAGES, load_strings
 from pitch_doctor.models import ScanReport
 from pitch_doctor.report.builder import BrandInfo, write_report
+from pitch_doctor.report.pdf_export import html_to_pdf
 from pitch_doctor.scoring import score_and_grade
 from pitch_doctor.web.templates import PAGE
 
 _SAFE_FILENAME = re.compile(r"[A-Za-z0-9_.-]+\.html")
+_SAFE_PDF_FILENAME = re.compile(r"[A-Za-z0-9_.-]+\.pdf")
 
 # Every string the reactive UI needs, per language. Kept separate from
 # pitch_doctor/i18n/*.json (which is the *report's* content contract) since
@@ -195,5 +197,55 @@ def create_app(out_dir: Path, timeout: float = 25.0) -> FastAPI:
         if not path.exists():
             return HTMLResponse("Not found", status_code=404)
         return HTMLResponse(path.read_text(encoding="utf-8"))
+
+    @app.get("/pdf/{filename}")
+    async def get_pdf(filename: str):
+        """Serve existing PDF file."""
+        if not _SAFE_PDF_FILENAME.fullmatch(filename):
+            return JSONResponse({"error": "Not found"}, status_code=404)
+        path = out_dir / filename
+        if not path.exists():
+            return JSONResponse({"error": "Not found"}, status_code=404)
+        return FileResponse(
+            path,
+            media_type="application/pdf",
+            filename=filename,
+        )
+
+    @app.post("/reports/{html_filename}/generate-pdf")
+    async def generate_pdf(html_filename: str):
+        """Generate PDF from HTML report."""
+        if not _SAFE_FILENAME.fullmatch(html_filename):
+            return JSONResponse({"error": "Invalid filename"}, status_code=400)
+
+        html_path = out_dir / html_filename
+        if not html_path.exists():
+            return JSONResponse({"error": "Report not found"}, status_code=404)
+
+        # Generate PDF filename from HTML filename
+        pdf_filename = html_filename.replace(".html", ".pdf")
+        pdf_path = out_dir / pdf_filename
+
+        try:
+            # Read HTML content
+            html_content = html_path.read_text(encoding="utf-8")
+
+            # Convert to PDF
+            success = html_to_pdf(html_content, pdf_path)
+
+            if success and pdf_path.exists():
+                return {
+                    "status": "success",
+                    "pdf_url": f"/pdf/{pdf_filename}",
+                    "filename": pdf_filename,
+                }
+            else:
+                return JSONResponse(
+                    {"error": "PDF generation failed - weasyprint not available"},
+                    status_code=500,
+                )
+
+        except Exception as e:
+            return JSONResponse({"error": str(e)}, status_code=500)
 
     return app
