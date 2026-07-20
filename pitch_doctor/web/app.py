@@ -162,7 +162,7 @@ def create_app(out_dir: Path, timeout: float = 25.0) -> FastAPI:
                 )
                 brand = BrandInfo(
                     name=req.brand_name or "Your Agency",
-                    email=req.brand_email or None,
+                    email=req.brand_email or "hello@zerodigitx.com",
                     phone=req.brand_phone or None,
                 )
                 html_path = write_report(scan_report, strings, brand, out_dir)
