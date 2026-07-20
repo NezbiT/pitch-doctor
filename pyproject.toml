@@ -7,7 +7,7 @@ name = "pitch-doctor"
 version = "0.1.0"
 description = "Turn any bad website into your next client. A CLI that audits business websites and generates client-ready, branded PDF/HTML reports for freelancers to win redesign work."
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 license = { text = "MIT" }
 authors = [{ name = "pitch-doctor contributors" }]
 keywords = ["website-audit", "cli", "freelance", "sales", "seo", "performance", "playwright"]
