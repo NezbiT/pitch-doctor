@@ -123,12 +123,13 @@
   .screen-col.desktop img { max-height: 320px; }
 
   /* ---------- Next steps ---------- */
-  .cta-page { background: var(--slate-900); color: #fff; min-height: 500px; display: flex; flex-direction: column; justify-content: center; }
-  .cta-heading { font-size: 30px; font-weight: 800; margin-bottom: 14px; }
+  .cta-page { background: var(--slate-900); color: #fff; min-height: 500px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+  .cta-heading { font-size: 36px; font-weight: 800; margin-bottom: 14px; }
   .cta-body { font-size: 16px; color: var(--slate-300); max-width: 560px; margin-bottom: 30px; }
-  .cta-box { background: var(--emerald); color: #04231a; border-radius: 14px; padding: 26px 30px; max-width: 560px; }
-  .cta-box .cta-line { font-size: 18px; font-weight: 700; margin-bottom: 12px; }
-  .cta-contacts { display: flex; gap: 26px; font-size: 14px; font-weight: 600; flex-wrap: wrap; }
+  .cta-box { background: var(--emerald); color: #04231a; border-radius: 14px; padding: 40px 50px; max-width: 650px; text-align: center; }
+  .cta-box .cta-line { font-size: 28px; font-weight: 700; margin-bottom: 20px; }
+  .cta-box .cta-subline { font-size: 18px; font-weight: 600; }
+  .cta-contacts { display: flex; gap: 26px; font-size: 14px; font-weight: 600; flex-wrap: wrap; justify-content: center; }
 
   @media print {
     body { background: #fff; }
@@ -239,6 +240,7 @@
     <div class="cta-body">{{ t.next_steps_body }}</div>
     <a href="https://zerodigitx.com/contact" class="cta-box" style="display: block; text-decoration: none; color: inherit;">
       <div class="cta-line">{{ t.next_steps_cta }}</div>
+      <div class="cta-subline">talk to Mario at zerodigitx.com</div>
       <div class="cta-contacts">
         <span>{{ brand.name }}</span>
         {% if brand.email %}<span>{{ brand.email }}</span>{% endif %}

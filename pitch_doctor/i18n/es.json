@@ -31,7 +31,7 @@
     "severity_warning": "Necesita atención",
     "severity_ok": "Bien",
     "next_steps_heading": "Próximos pasos",
-    "next_steps_body": "Los problemas anteriores son comunes, tienen solución y vale la pena resolverlos pronto: cada día que pasan sin corregirse es un día más de visitantes perdidos y llamadas que no llegan. Vamos a solucionarlo.",
+    "next_steps_body": "",
     "next_steps_cta": "Habla con Mario",
     "footer_generated_by": "Generado por {brand_name} con pitch-doctor",
     "toc_heading": "Contenido"
