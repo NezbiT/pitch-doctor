@@ -6,8 +6,9 @@ links, and missing address information.
 
 from __future__ import annotations
 
+import re
+
 from pitch_doctor.checks.base import (
-    find_plain_text_phone,
     has_address_hint,
     has_email_or_contact_link,
     has_tappable_phone_link,
@@ -18,17 +19,35 @@ from pitch_doctor.models import CheckResult, ScanContext, Severity
 
 CHECK_ID = "contact_friction"
 
+# Pattern to find phone numbers in plain text (used only to determine if a
+# *non-tappable* phone number exists on the page).
+_PHONE_RE = re.compile(
+    r"(?:^|\s)(\+?\d{1,3}[\s.-]?)?\(? \d{2,4}\)?[\s.-]?\d{3,4}[\s.-]?\d{3,4}(?:\s|$)",
+)
+
+
+def _plain_phone_in_body(soup) -> bool:
+    """Return True if the body text contains at least one raw phone number."""
+    body_text = soup.get_text(" ", strip=True) if soup else ""
+    return bool(_PHONE_RE.search(body_text))
+
 
 def evaluate(ctx: ScanContext, strings: Strings) -> CheckResult:
     soup = soupify(ctx.html)
 
-    plain_phone_present = find_plain_text_phone(soup)
-    tappable_phone_present = has_tappable_phone_link(soup)
+    # --- Phone number tappable check ---
+    # Only flag as "phone not tappable" if we *actually* find a phone number
+    # in the body text that is NOT wrapped in a <a href="tel:...">.
+    # A number that appears *only* as a tel: link is fine and should NOT
+    # trigger the "phone not tappable" issue.
+    has_plain_phone = _plain_phone_in_body(soup)
+    has_tappable_phone = has_tappable_phone_link(soup) if soup else False
+    phone_not_tappable = has_plain_phone and not has_tappable_phone
+
     has_contact = has_email_or_contact_link(soup)
     has_address = has_address_hint(soup)
 
     issues = []
-    phone_not_tappable = plain_phone_present and not tappable_phone_present
     if phone_not_tappable:
         issues.append(strings.check_text(CHECK_ID, "issue_phone_not_tappable"))
     if not has_contact:

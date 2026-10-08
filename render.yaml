@@ -2,19 +2,24 @@
 # Dashboard: New → Blueprint → connect this repo, or:
 #   https://dashboard.render.com/select-repo?type=blueprint
 #
-# Free plan notes:
-# - Service sleeps after ~15 min of inactivity (first request is cold).
-# - 512 MB RAM can be tight for Chromium; if scans OOM, upgrade to Starter.
-# - Custom domain (e.g. test.mariosalvarez.com) is free on Render.
+# Plan: starter (not free) so the container stays warm and scans finish
+# within the uvicorn timeout.  The free plan sleeps after ~15 min and
+# the cold-start often hits that 25s limit.
+#
+# Custom domain (e.g. test.mariosalvarez.com) is free on Render.
 
 services:
   - type: web
     name: pitch-doctor
     runtime: docker
-    plan: free
-    healthCheckPath: /
+    plan: starter
+    healthCheckPath: /health
     envVars:
       - key: PLAYWRIGHT_CHANNEL
         value: chromium
       - key: PLAYWRIGHT_NO_SANDBOX
         value: "1"
+      - key: PITCH_DOCTOR_RENDER_TIMEOUT
+        value: "25"
+      - key: PITCH_DOCTOR_SIGN_SALT
+        value: "zerodigitx-2026"

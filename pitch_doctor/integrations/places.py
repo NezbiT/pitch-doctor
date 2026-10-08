@@ -223,7 +223,10 @@ async def lookup_business(
 
     key = api_key()
     if key is None:
-        return GbpProfile(found=False, error=f"{API_KEY_ENV_VAR} is not set")
+        return GbpProfile(
+            found=False,
+            error=f"Google Places API key ({API_KEY_ENV_VAR}) is not configured. This check will be skipped.",
+        )
 
     query = build_query(business_name, city)
     resolved_cache = cache_path or default_cache_path()
