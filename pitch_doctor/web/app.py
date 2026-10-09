@@ -321,6 +321,24 @@ def create_app(out_dir: Path, timeout: float = 25.0) -> FastAPI:
     # Health ping — Render free-plan sleeps after ~15 min; this ping
     # endpoint is hit by the Render uptime-checker to keep the container alive.
     # ------------------------------------------------------------------
+    # ------------------------------------------------------------------
+    # Privacy policy page — bilingual (en/es)
+    # ------------------------------------------------------------------
+    _PRIVACY_DIR = Path(__file__).parent
+    _PRIVACY_FILES = {
+        "en": "privacy_en.html",
+        "es": "privacy_es.html",
+    }
+
+    @app.get("/privacy")
+    async def privacy_page(lang: str = "en"):
+        _lang = lang if lang in _PRIVACY_FILES else "en"
+        filename = _PRIVACY_FILES[_lang]
+        path = _PRIVACY_DIR / filename
+        if path.exists():
+            return HTMLResponse(path.read_text(encoding="utf-8"))
+        return HTMLResponse("Not found", status_code=404)
+
     @app.get("/health")
     async def health() -> dict:
         return {"status": "ok"}

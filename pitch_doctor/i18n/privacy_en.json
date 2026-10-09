@@ -1,0 +1,71 @@
+{
+  "privacy_page": {
+    "title": "Privacy Policy",
+    "heading": "Privacy Policy for Pitch-Doctor",
+    "last_updated": "Last updated: October 8, 2026",
+    "intro": "Pitch-Doctor is a diagnostic tool built by Zero Digit X (Mario Alvarez) to scan public websites and generate business-focused audit reports. This policy explains what information we collect, how we use it, and your rights.",
+    "data_we_collect": {
+      "heading": "Information We Collect",
+      "items": [
+        "The website URL you enter for scanning.",
+        "The IP address of the device performing the scan (collected automatically by our server).",
+        "Business name, city, brand name, and email you provide when filling out the scan form — these are used to personalize your report and for lead tracking.",
+        "A screenshot of your website captured during the scan (both mobile and desktop views).",
+        "Technical details we discover while scanning: page title, meta tags, links, SSL certificates, structured data, and other publicly available information."
+      ]
+    },
+    "how_we_use": {
+      "heading": "How We Use Your Information",
+      "items": [
+        "Generate the audit report and show it to you in your browser.",
+        "Save the report as an HTML file with HMAC-signed URLs so only you (or anyone with the exact link) can access it.",
+        "Store basic lead information (email, business name, city, scanned URL, score) in a local leads file for business analytics.",
+        "Send requests to third-party services only as part of the scan: Google Maps / Google Business Profile API (if a key is configured), and any other services needed to perform the health check.",
+        "Keep the server running via health-check pings (Render uptime-monitor) — this does not collect personal data."
+      ]
+    },
+    "data_retention": {
+      "heading": "Data Retention",
+      "items": [
+        "Reports are stored as HTML files on the server until they are manually deleted.",
+        "Lead data (emails, business names, cities) is stored in a local JSON file and is accessible only to the operator of the pitch-doctor instance.",
+        "Rate limiting data (IP-based, 10 scans per 60 seconds) is kept in memory only and is lost when the server restarts.",
+        "If you are running your own instance of pitch-doctor, all data stays on your server — nothing is sent to third parties except for the optional Google Places API call."
+      ]
+    },
+    "third_party": {
+      "heading": "Third-Party Services",
+      "items": [
+        "Google Places / Google Business Profile API — used to look up business listings. Requires a separate API key. Data returned is used only to generate the report.",
+        "Rendering services (Playwright / headless browser) — used to capture screenshots. Screenshot data is stored locally with the report.",
+        "Render.com — the hosting platform for the hosted pitch-doctor instance. Render's own privacy policy applies to server infrastructure logs."
+      ]
+    },
+    "your_rights": {
+      "heading": "Your Rights",
+      "items": [
+        "You can request deletion of your lead data by contacting us at mariosalvarez.com.",
+        "You can request a copy of any data we hold about you by emailing the same address.",
+        "Reports contain HMAC-signed URLs; if you believe a report link has been compromised, contact us and we will revoke it."
+      ]
+    },
+    "children": {
+      "heading": "Children's Privacy",
+      "items": [
+        "Pitch-Doctor is a business tool intended for website owners, agencies, and marketers. We do not knowingly collect personal information from children under 13."
+      ]
+    },
+    "changes": {
+      "heading": "Changes to This Policy",
+      "items": [
+        "We may update this policy from time to time. Changes will be posted on this page with an updated date."
+      ]
+    },
+    "contact": {
+      "heading": "Contact",
+      "items": [
+        "Questions about this policy? Reach out to Mario Alvarez at mariosalvarez.com or through the contact form on Zero Digit X (zerodigitx.com)."
+      ]
+    }
+  }
+}

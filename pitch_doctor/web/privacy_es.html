@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Política de Privacidad - Pitch-Doctor</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --border: #30363d;
+    --text: #e6edf3;
+    --text-secondary: #8b949e;
+    --accent: #58a6ff;
+    --accent-hover: #79b8ff;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    padding: 2rem 1rem;
+  }
+  .container { max-width: 760px; margin: 0 auto; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { color: var(--accent-hover); text-decoration: underline; }
+  h1 {
+    font-size: 1.75rem;
+    margin-bottom: 0.25rem;
+    color: var(--text);
+  }
+  .subtitle {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    margin-bottom: 2rem;
+  }
+  .nav {
+    margin-bottom: 2rem;
+    display: flex;
+    gap: 1rem;
+  }
+  .nav a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--accent);
+    padding: 0.4rem 0.9rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+  }
+  .nav a:hover {
+    background: var(--border);
+    text-decoration: none;
+  }
+  .section {
+    margin-bottom: 2rem;
+  }
+  .section h2 {
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+    color: var(--accent);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.4rem;
+  }
+  .section ul {
+    list-style: none;
+    padding-left: 0;
+  }
+  .section li {
+    position: relative;
+    padding-left: 1.25rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-secondary);
+  }
+  .section li::before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+  }
+  .intro {
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+  }
+  footer {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="nav">
+    <a href="/">← Volver a Pitch-Doctor</a>
+    <a href="/privacy">View English version →</a>
+  </div>
+
+  <h1>Política de Privacidad de Pitch-Doctor</h1>
+  <p class="subtitle">Última actualización: 8 de octubre de 2026</p>
+
+  <div class="section">
+    <p class="intro">
+      Pitch-Doctor es una herramienta de diagnóstico creada por <a href="https://zerodigitx.com" target="_blank">Zero Digit X</a> (Mario Alvarez) para escanear sitios web públicos y generar reportes de auditoría enfocados en el negocio. Esta política explica qué información recopilamos, cómo la usamos y tus derechos.
+    </p>
+  </div>
+
+  <div class="section">
+    <h2>Información que Recopilamos</h2>
+    <ul>
+      <li>La URL del sitio web que ingresas para el escaneo.</li>
+      <li>La dirección IP del dispositivo que realiza el escaneo (recopilada automáticamente por nuestro servidor).</li>
+      <li>Nombre del negocio, ciudad, nombre de marca y correo electrónico que proporcionas al llenar el formulario de escaneo: se usan para personalizar tu reporte y para seguimiento de leads.</li>
+      <li>Una captura de pantalla de tu sitio web tomada durante el escaneo (vistas tanto en móvil como en escritorio).</li>
+      <li>Detalles técnicos que descubrimos durante el escaneo: título de la página, meta tags, enlaces, certificados SSL, datos estructurados y otra información públicamente disponible.</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>Cómo Usamos Tu Información</h2>
+    <ul>
+      <li>Generar el reporte de auditoría y mostrártelo en tu navegador.</li>
+      <li>Guardar el reporte como un archivo HTML con URLs firmadas HMAC para que solo tú (o cualquiera con el enlace exacto) pueda acceder a él.</li>
+      <li>Almacenar información básica de leads (correo, nombre del negocio, ciudad, URL escaneada, puntaje) en un archivo local de leads para análisis de negocio.</li>
+      <li>Enviar solicitudes a servicios de terceros únicamente como parte del escaneo: Google Maps / Google Business Profile API (si se configura una clave), y cualquier otro servicio necesario para realizar la verificación de salud.</li>
+      <li>Mantener el servidor en funcionamiento mediante pings de health-check (monitor de Render) — esto no recopila datos personales.</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>Retención de Datos</h2>
+    <ul>
+      <li>Los reportes se almacenan como archivos HTML en el servidor hasta que se eliminen manualmente.</li>
+      <li>Los datos de leads (correos, nombres de negocios, ciudades) se almacenan en un archivo JSON local y solo son accesibles para el operador de la instancia de pitch-doctor.</li>
+      <li>Los datos de limitación de frecuencia (basados en IP, 10 escaneos por 60 segundos) se mantienen solo en memoria y se pierden cuando el servidor se reinicia.</li>
+      <li>Si estás ejecutando tu propia instancia de pitch-doctor, todos los datos se quedan en tu servidor — nada se envía a terceros excepto la llamada opcional a Google Places API.</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>Servicios de Terceros</h2>
+    <ul>
+      <li><a href="https://cloud.google.com/maps-platform" target="_blank">Google Places / Google Business Profile API</a> — utilizada para buscar fichas de negocios. Requiere una clave API separada. Los datos devueltos se usan solo para generar el reporte.</li>
+      <li>Servicios de renderizado (Playwright / navegador sin cabeza) — utilizados para capturar capturas de pantalla. Los datos de las capturas se almacenan localmente junto con el reporte.</li>
+      <li><a href="https://render.com" target="_blank">Render.com</a> — la plataforma de alojamiento de la instancia hospedada de pitch-doctor. La política de privacidad de Render se aplica a los registros de infraestructura del servidor.</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>Tus Derechos</h2>
+    <ul>
+      <li>Puedes solicitar la eliminación de tus datos de lead contactándonos en <a href="https://mariosalvarez.com" target="_blank">mariosalvarez.com</a>.</li>
+      <li>Puedes solicitar una copia de cualquier dato que tengamos sobre ti enviando un correo a la misma dirección.</li>
+      <li>Los reportes contienen URLs firmadas HMAC; si crees que un enlace de reporte ha sido comprometido, contáctanos y lo revocaremos.</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>Privacidad de Menores</h2>
+    <ul>
+      <li>Pitch-Doctor es una herramienta de negocios dirigida a dueños de sitios web, agencias y mercadólogos. No recopilamos intencionalmente información personal de niños menores de 13 años.</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>Cambios en Esta Política</h2>
+    <ul>
+      <li>Podemos actualizar esta política de vez en cuando. Los cambios se publicarán en esta página con una fecha actualizada.</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>Contacto</h2>
+    <ul>
+      <li>¿Preguntas sobre esta política? Comunícate con Mario Alvarez en <a href="https://mariosalvarez.com" target="_blank">mariosalvarez.com</a> o a través del formulario de contacto en <a href="https://zerodigitx.com" target="_blank">Zero Digit X</a>.</li>
+    </ul>
+  </div>
+
+  <footer>
+    <p>© 2026 Zero Digit X. Todos los derechos reservados.</p>
+  </footer>
+</div>
+</body>
+</html>
