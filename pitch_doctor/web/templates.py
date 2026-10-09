@@ -319,7 +319,22 @@ async function poll(jobId) {
   try {
     const res = await fetch('/api/status/' + jobId);
     if (!res.ok) throw new Error('status check failed');
-    const data = await res.json();
+    
+    // Check content-type before trying to parse JSON
+    // This prevents SyntaxError when server returns HTML error pages
+    const ct = res.headers.get('content-type') || '';
+    if (!ct.includes('application/json')) {
+      const text = await res.text();
+      throw new Error('Server returned non-JSON response — scan may have failed');
+    }
+    
+    let data;
+    try {
+      data = await res.json();
+    } catch (jsonErr) {
+      throw new Error('Invalid JSON from server — scan may have failed');
+    }
+    
     if (data.status === 'running') {
       setStage(data.stage);
       setTimeout(function () { poll(jobId); }, 700);
@@ -367,11 +382,12 @@ form.addEventListener('submit', async function (evt) {
   };
 
   try {
-    const res = await fetch('/api/scan', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
+    const res = await // Safety check: verify JSON response before parsing
+    const scanCt = res.headers.get('content-type') || '';
+    if (!res.ok || !scanCt.includes('application/json')) {
+      const text = await res.text();
+      throw new Error('Server error — scan failed');
+    }
     const data = await res.json();
     if (!res.ok) throw new Error(errorMessage(data));
 
