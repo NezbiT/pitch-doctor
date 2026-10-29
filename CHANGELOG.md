@@ -77,6 +77,23 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   normal connection experiences. Now measures First Contentful Paint (time
   until visible content appears) on a more realistic mid-range mobile
   throttle profile, and the report copy is explicit about the methodology.
+- **The web scan endpoint returned 500 for malformed emails.** The email regex
+  in `ScanRequest` had an unclosed group, so `re` raised `PatternError`, which
+  pydantic does not convert to a 422. Fixed the pattern; invalid input is now a
+  422 with a message.
+- **The web UI page script was a syntax error.** A bad merge in
+  `web/templates.py` left `const res = await // Safety check...`, so the whole
+  page script failed to parse and the scan button did nothing.
+- **PDF export failed hard when WeasyPrint's system libraries were missing.**
+  WeasyPrint raises `OSError` (not `ImportError`) when Pango/GObject cannot be
+  loaded; the fallback now catches both.
+- **CRM lead API exposed all leads without authentication.** `crm-lead-api.py`
+  bound to `0.0.0.0` with CORS `*` and a `POST` insert route. It now requires
+  `CRM_API_TOKEN` (503 if unset, 401 if wrong), opens `leads.db` read-only,
+  allows only `https://zerodigitx.com` by default, binds to localhost by default,
+  and neutralises formula-like cells in the CSV export.
+- Lint: removed an unused import and an unused variable in `web/app.py`, and the
+  dead placeholder encoder/decoder pair it contained, so `ruff check .` passes.
 
 ### Added
 - `pitch-doctor serve`: an optional local reactive web UI (`pip install -e

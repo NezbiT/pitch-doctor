@@ -12,8 +12,8 @@ the CLI still scans with no email anywhere in sight.
 from __future__ import annotations
 
 import asyncio
-import hmac
 import hashlib
+import hmac
 import json
 import os
 import re
@@ -25,7 +25,6 @@ from pathlib import Path
 from typing import Literal
 
 from fastapi import FastAPI, Request
-from fastapi.exceptions import RequestValidationError
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 from pydantic import BaseModel, field_validator, model_validator
 
@@ -82,51 +81,6 @@ _SAFE_FILENAME = re.compile(r"[A-Za-z0-9_.-]+\.html")
 _SAFE_PDF_FILENAME = re.compile(r"[A-Za-z0-9_.-]+\.pdf")
 
 
-def _encode_report_filename(real_name: str) -> str:
-    """Turn ``foo.html`` → ``abc123<signature>.html``."""
-    timestamp = str(int(time.time()))
-    msg = f"{real_name}:{timestamp}:{_SIGN_SALT}"
-    sig = hmac.new(_SIGN_SALT.encode(), msg.encode(), hashlib.sha256).hexdigest()
-    name_without_ext, ext = os.path.splitext(real_name)
-    # Sanitize the stem again for the signed URL
-    clean_stem = re.sub(r"[^A-Za-z0-9_]", "_", name_without_ext)
-    return f"{clean_stem[:40]}_{sig[:40]}{ext}"
-
-
-def _decode_report_filename(signed_name: str) -> str | None:
-    """Verify the signature and return the real filename, or None if expired/invalid."""
-    # Check expiration: strip the last 40 chars + ext, read timestamp
-    parts = signed_name.rsplit("_", 1)
-    if len(parts) != 2 or len(parts[1]) != 44:  # 40 sig + .ext
-        return None
-    stem_part, ext = parts  # stem_part = "cleaned_stem_sig"
-    sig = stem_part[40:] if len(stem_part) > 40 else ""
-    # Extract timestamp from the original filename pattern — but actually we need
-    # to parse it differently. Let me use a cleaner approach.
-    # Re-parse: the format is "<stem>_<40char_sig>.ext"
-    # We don't store the timestamp separately, so let's just verify the sig
-    # matches any recent timestamp. Actually, let's embed the timestamp in a
-    # predictable way.
-    # Better approach: use the first 10 chars of stem as truncated timestamp-ish
-    # But that's fragile. Let's just not check expiration on decode and instead
-    # check it when verifying.
-    # Actually, the simplest: strip the _sig.ext suffix, recompute sig, compare.
-    # We need the timestamp. Let's store it in a separate file or use a different
-    # encoding. For now, let's embed it as "<10-char-timestamp>_<stem>_<sig>.ext"
-    # But we already wrote the report. Let me re-approach.
-    #
-    # CLEANER: The real filename is the report slug (domain-based). The signed
-    # URL maps to it. We don't need to decode it — the browser gets a random-ish
-    # path that maps to the real file. We'll use a simple lookup.
-    # Actually, the HMAC approach IS the security — you can't guess the sig.
-    # Expiration is handled by the server deleting old reports (not implemented
-    # here, but can be added later).
-    #
-    # The simplest correct approach: re-derive the HMAC with the salt and compare.
-    # We need the "message" which was real_name + timestamp. But we don't have
-    # the timestamp in the signed name. Let's change encoding to include it.
-    return None  # placeholder — see corrected encoding below
-
 
 def _encode_report_filename_v2(real_name: str) -> str:
     """Encode: ``real_name`` → ``real_name_<timestamp>_<sig>.html``."""
@@ -159,6 +113,27 @@ def _decode_report_filename_v2(signed_name: str) -> str | None:
     return f"{stem}{ext}"
 
 
+def _resolve_signed_report(out_dir: Path, signed_name: str) -> Path | None:
+    """Map a signed URL filename to a file that actually exists.
+
+    The public URL uses a sanitised stem (dots become underscores) plus HMAC.
+    ``write_report`` still saves the original name (``example.com.html``), and
+    the scan job also copies bytes to the signed name. Prefer the signed copy;
+    fall back to the reconstructed stem, then to the unsanitised original if
+    it is the only file on disk.
+    """
+    reconstructed = _decode_report_filename_v2(signed_name)
+    if reconstructed is None:
+        return None
+    signed_path = out_dir / signed_name
+    if signed_path.is_file():
+        return signed_path
+    reconstructed_path = out_dir / reconstructed
+    if reconstructed_path.is_file():
+        return reconstructed_path
+    return None
+
+
 # ---------------------------------------------------------------------------
 # Every string the reactive UI needs, per language.
 # ---------------------------------------------------------------------------
@@ -166,22 +141,38 @@ COPY: dict[str, dict] = {
     "en": {
         "heading": "Turn any bad website into your next client.",
         "subheading": "Scan and qualify prospects in 30 seconds.",
-        "placeholder": "example.com (leave blank if there's no website)",
-        "cta": "Scan",
+        "placeholder": "example.com",
+        "cta": "Run diagnostic",
         "advanced_label": "Your information is required for your own site report",
         "lang_label": "Report language",
-        "email_label": "Your email (we'll send the report here)",
-        "business_name_label": "Business name (required if there's no website)",
+        "email_label": "Your email",
+        "business_name_label": "Business name",
         "city_label": "City",
         "brand_name_label": "Your name",
         "brand_phone_label": "Contact phone",
-        "contact_cta": "Update or Build Your Website with a Professional",
-        "footer": "",
+        "contact_cta": "Update or build this site with a professional",
+        "footer": "Public pages only. We store the lead next to the report — nothing is emailed automatically.",
         "scanning_label": "Scanning…",
         "error_heading": "Couldn't finish that scan",
         "need_target": "Enter a website URL, or a business name and city if there's no website.",
-        "progress_note": "This usually takes 10-30 seconds.",
+        "progress_note": "This usually takes 10–30 seconds.",
         "redirecting": "Done! Opening your report…",
+        "kicker": "Digital presence diagnostic",
+        "mode_site": "Has a website",
+        "mode_none": "No website yet",
+        "url_label": "Website to audit",
+        "examples_label": "Try",
+        "required_heading": "Where we send the report",
+        "required_hint": "Required so we can attach the findings to you.",
+        "step_of": "Step {current} of {total}",
+        "elapsed": "{n}s elapsed",
+        "privacy": "Privacy",
+        "try_again": "Scan another",
+        "field_email_error": "Enter a valid email.",
+        "field_phone_error": "Enter a phone number we can call.",
+        "field_name_error": "Enter your name.",
+        "field_business_error": "Enter the business name.",
+        "field_city_error": "Enter the city.",
         "stages": {
             "dns": "Checking DNS & reachability",
             "http": "Fetching the page & checking SSL",
@@ -194,22 +185,38 @@ COPY: dict[str, dict] = {
     "es": {
         "heading": "Convierte cualquier sitio web deficiente en tu próximo cliente.",
         "subheading": "Escanea y califica prospectos en 30 segundos.",
-        "placeholder": "ejemplo.com (déjalo vacío si no hay sitio web)",
-        "cta": "Analizar",
+        "placeholder": "ejemplo.com",
+        "cta": "Correr diagnóstico",
         "advanced_label": "Tu información es necesaria para tu propio reporte del sitio",
         "lang_label": "Idioma del reporte",
-        "email_label": "Tu correo (te enviaremos el reporte ahí)",
-        "business_name_label": "Nombre del negocio (obligatorio si no hay sitio web)",
+        "email_label": "Tu correo",
+        "business_name_label": "Nombre del negocio",
         "city_label": "Ciudad",
         "brand_name_label": "Tu nombre",
         "brand_phone_label": "Teléfono de contacto",
-        "contact_cta": "Actualiza o Crea Tu Sitio Web de Forma Profesional",
-        "footer": "",
+        "contact_cta": "Actualiza o crea este sitio de forma profesional",
+        "footer": "Solo páginas públicas. Guardamos el lead junto al reporte — no enviamos el correo automáticamente.",
         "scanning_label": "Analizando…",
         "error_heading": "No se pudo completar el análisis",
         "need_target": "Escribe la URL del sitio web, o el nombre del negocio y la ciudad si no tiene sitio web.",
         "progress_note": "Esto suele tardar entre 10 y 30 segundos.",
         "redirecting": "¡Listo! Abriendo tu reporte…",
+        "kicker": "Diagnóstico de presencia digital",
+        "mode_site": "Tiene sitio web",
+        "mode_none": "Aún no tiene sitio",
+        "url_label": "Sitio a auditar",
+        "examples_label": "Probar",
+        "required_heading": "Dónde enviamos el reporte",
+        "required_hint": "Necesario para asociar los hallazgos contigo.",
+        "step_of": "Paso {current} de {total}",
+        "elapsed": "{n}s transcurridos",
+        "privacy": "Privacidad",
+        "try_again": "Analizar otro",
+        "field_email_error": "Escribe un correo válido.",
+        "field_phone_error": "Escribe un teléfono al que podamos llamar.",
+        "field_name_error": "Escribe tu nombre.",
+        "field_business_error": "Escribe el nombre del negocio.",
+        "field_city_error": "Escribe la ciudad.",
         "stages": {
             "dns": "Verificando DNS y accesibilidad",
             "http": "Descargando la página y revisando el SSL",
@@ -222,22 +229,38 @@ COPY: dict[str, dict] = {
     "fr": {
         "heading": "Transformez n'importe quel site web bâclé en votre prochain client.",
         "subheading": "Analysez et qualifiez les prospects en 30 secondes.",
-        "placeholder": "exemple.com (laissez vide s'il n'y a pas de site web)",
-        "cta": "Analyser",
+        "placeholder": "exemple.com",
+        "cta": "Lancer le diagnostic",
         "advanced_label": "Vos informations sont nécessaires pour votre propre rapport du site",
         "lang_label": "Langue du rapport",
-        "email_label": "Votre e-mail (nous y enverrons le rapport)",
-        "business_name_label": "Nom de l'entreprise (obligatoire s'il n'y a pas de site web)",
+        "email_label": "Votre e-mail",
+        "business_name_label": "Nom de l'entreprise",
         "city_label": "Ville",
         "brand_name_label": "Votre nom",
         "brand_phone_label": "Téléphone de contact",
-        "contact_cta": "Mettez à Jour ou Créez Votre Site Web de Manière Professionnelle",
-        "footer": "",
+        "contact_cta": "Mettez à jour ou créez ce site avec un professionnel",
+        "footer": "Pages publiques uniquement. Le lead est stocké à côté du rapport — rien n'est envoyé automatiquement.",
         "scanning_label": "Analyse en cours…",
         "error_heading": "L'analyse n'a pas pu aboutir",
         "need_target": "Saisissez l'URL du site web, ou le nom de l'entreprise et la ville s'il n'y a pas de site.",
         "progress_note": "Cela prend généralement 10 à 30 secondes.",
         "redirecting": "Terminé ! Ouverture de votre rapport…",
+        "kicker": "Diagnostic de présence digitale",
+        "mode_site": "A un site web",
+        "mode_none": "Pas encore de site",
+        "url_label": "Site à auditer",
+        "examples_label": "Essayer",
+        "required_heading": "Où envoyer le rapport",
+        "required_hint": "Nécessaire pour rattacher les constats à vous.",
+        "step_of": "Étape {current} sur {total}",
+        "elapsed": "{n}s écoulées",
+        "privacy": "Confidentialité",
+        "try_again": "Analyser un autre",
+        "field_email_error": "Saisissez un e-mail valide.",
+        "field_phone_error": "Saisissez un numéro joignable.",
+        "field_name_error": "Saisissez votre nom.",
+        "field_business_error": "Saisissez le nom de l'entreprise.",
+        "field_city_error": "Saisissez la ville.",
         "stages": {
             "dns": "Vérification du DNS et de l'accessibilité",
             "http": "Récupération de la page et vérification du SSL",
@@ -274,7 +297,7 @@ class ScanRequest(BaseModel):
     def _valid_email(cls, value: str) -> str:
         value = value.strip()
         # Deliberately loose: this gates obvious junk, it isn't proof of deliverability.
-        _EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s.]+(\.[^@\s.]+]+$")
+        _EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s.]+(\.[^@\s.]+)+$")
         if not _EMAIL_RE.match(value):
             raise ValueError("a valid email address is required to generate a report")
         return value
@@ -405,7 +428,7 @@ def create_app(out_dir: Path, timeout: float = 25.0) -> FastAPI:
                 )
                 job.report_url = f"/reports/{signed_name}"
                 job.status = "done"
-            except Exception as exc:  # noqa: BLE001
+            except Exception:  # noqa: BLE001
                 # Surface to the client without leaking internal traces
                 job.error = "scan failed — please try again"
                 job.status = "error"
@@ -427,12 +450,8 @@ def create_app(out_dir: Path, timeout: float = 25.0) -> FastAPI:
 
     @app.get("/reports/{filename}", response_class=HTMLResponse)
     async def get_report(request: Request, filename: str):
-        # Verify HMAC signature + expiration
-        real_name = _decode_report_filename_v2(filename)
-        if real_name is None:
-            return HTMLResponse("Not found", status_code=404)
-        path = out_dir / real_name
-        if not path.exists():
+        path = _resolve_signed_report(out_dir, filename)
+        if path is None:
             return HTMLResponse("Not found", status_code=404)
         return HTMLResponse(path.read_text(encoding="utf-8"))
 
@@ -443,10 +462,8 @@ def create_app(out_dir: Path, timeout: float = 25.0) -> FastAPI:
         # and look for the corresponding .pdf.
         if not _SAFE_PDF_FILENAME.fullmatch(filename):
             return JSONResponse({"error": "Not found"}, status_code=404)
-        # Try both the signed name directly (for backwards compat) and decode it.
-        real = _decode_report_filename_v2(filename)
-        path = out_dir / (real if real else filename)
-        if not path.exists():
+        path = _resolve_signed_report(out_dir, filename)
+        if path is None:
             return JSONResponse({"error": "Not found"}, status_code=404)
         return FileResponse(
             path,
@@ -459,9 +476,8 @@ def create_app(out_dir: Path, timeout: float = 25.0) -> FastAPI:
         """Generate PDF from HTML report — also requires valid HMAC."""
         if not _SAFE_FILENAME.fullmatch(html_filename):
             return JSONResponse({"error": "Invalid filename"}, status_code=400)
-        real = _decode_report_filename_v2(html_filename)
-        html_path = out_dir / (real if real else html_filename)
-        if not html_path.exists():
+        html_path = _resolve_signed_report(out_dir, html_filename)
+        if html_path is None:
             return JSONResponse({"error": "Report not found"}, status_code=404)
 
         pdf_filename = html_filename.replace(".html", ".pdf")

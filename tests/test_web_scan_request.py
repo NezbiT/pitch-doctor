@@ -12,7 +12,11 @@ pytest.importorskip("fastapi")
 
 from pydantic import ValidationError  # noqa: E402
 
-from pitch_doctor.web.app import ScanRequest  # noqa: E402
+from pitch_doctor.web.app import (  # noqa: E402
+    ScanRequest,
+    _encode_report_filename_v2,
+    _resolve_signed_report,
+)
 
 
 def _payload(**overrides):
@@ -60,3 +64,14 @@ def test_a_business_name_and_city_stand_in_for_a_url():
     req = ScanRequest(**_payload(url=None, business_name="Joe's Plumbing", city="Houston"))
     assert req.url is None
     assert req.business_name == "Joe's Plumbing"
+
+
+def test_signed_report_url_serves_the_copied_file(tmp_path):
+    original = tmp_path / "example.com-es.html"
+    original.write_text("<html>ok</html>", encoding="utf-8")
+    signed_name = _encode_report_filename_v2(original.name)
+    (tmp_path / signed_name).write_bytes(original.read_bytes())
+
+    resolved = _resolve_signed_report(tmp_path, signed_name)
+    assert resolved is not None
+    assert resolved.read_text(encoding="utf-8") == "<html>ok</html>"

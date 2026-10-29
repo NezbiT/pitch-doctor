@@ -10,7 +10,9 @@ from pathlib import Path
 
 try:
     from weasyprint import CSS, HTML
-except ImportError:
+except (ImportError, OSError):
+    # OSError: WeasyPrint is installed but its native deps (Pango/GObject)
+    # are missing. The web UI and HTML reports still work without PDFs.
     HTML = None
     CSS = None
 
