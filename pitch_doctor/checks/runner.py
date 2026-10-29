@@ -186,7 +186,8 @@ async def _check_www_mismatch(url: str, timeout: float) -> bool:
 
 async def _fetch_http(url: str, timeout: float) -> dict:
     """Fetch the page over HTTP(S), tolerating -- and recording -- SSL failures."""
-    headers = {"User-Agent": USER_AGENT}
+    # Accept: text/html makes edge-injected scripts (Cloudflare beacon) appear.
+    headers = {"User-Agent": USER_AGENT, "Accept": "text/html,application/xhtml+xml"}
     ssl_error: str | None = None
     has_valid_ssl = url.startswith("https://")
     try:

@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from pitch_doctor.i18n import Strings
 from pitch_doctor.models import CheckResult, ScanContext, Severity
+from pitch_doctor.checks.base import soupify
 
 CHECK_ID = "accessibility"
 
@@ -17,8 +18,8 @@ def evaluate(ctx: ScanContext, strings: Strings) -> CheckResult:
 
     html = ctx.html or ""
 
-    # Check for alt text on images
-    images_without_alt = html.count("<img") - html.count('alt="')
+    # Count <img> tags with no alt attribute; alt="" is valid (decorative image).
+    images_without_alt = sum(1 for img in soupify(html).find_all("img") if img.get("alt") is None)
     if images_without_alt > 0:
         issues.append(f"{images_without_alt} images missing alt text (accessibility violation)")
 

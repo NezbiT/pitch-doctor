@@ -16,7 +16,9 @@ def evaluate(ctx: ScanContext, strings: Strings) -> CheckResult:
     headers = ctx.headers or {}
 
     missing_headers = []
-    if not any(h in headers for h in ["x-frame-options", "X-Frame-Options"]):
+    csp = headers.get("content-security-policy") or headers.get("Content-Security-Policy") or ""
+    # frame-ancestors in CSP is the modern replacement for X-Frame-Options.
+    if not any(h in headers for h in ["x-frame-options", "X-Frame-Options"]) and "frame-ancestors" not in csp.lower():
         missing_headers.append("X-Frame-Options (clickjacking protection)")
     if not any(h in headers for h in ["x-content-type-options", "X-Content-Type-Options"]):
         missing_headers.append("X-Content-Type-Options (MIME sniffing protection)")

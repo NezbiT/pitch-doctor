@@ -33,6 +33,10 @@ def evaluate(ctx: ScanContext, strings: Strings) -> CheckResult:
     if 'utm_' in html.lower():
         tracking_tools.append("UTM campaign tracking")
 
+    # Cloudflare Web Analytics: beacon is injected at the edge
+    if "static.cloudflareinsights.com" in html.lower() or "data-cf-beacon" in html.lower():
+        tracking_tools.append("Cloudflare Web Analytics")
+
     # Check for event tracking JS
     if 'gtag(' in html.lower() or '.track(' in html.lower():
         tracking_tools.append("Custom event tracking")

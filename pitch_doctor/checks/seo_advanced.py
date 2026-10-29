@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from pitch_doctor.i18n import Strings
 from pitch_doctor.models import CheckResult, ScanContext, Severity
+from pitch_doctor.checks.base import soupify
 
 CHECK_ID = "seo_advanced"
 
@@ -27,11 +28,11 @@ def evaluate(ctx: ScanContext, strings: Strings) -> CheckResult:
     if 'schema.org' not in html and 'application/ld+json' not in html:
         missing_features.append("Structured data (Schema.org/JSON-LD) for rich snippets")
 
-    # Check for robots.txt (would need DNS check, approximate with meta robots)
-    if 'noindex' not in html and 'nofollow' not in html:
-        # Site is likely indexable, this is good
-        pass
-    else:
+    # Flag only a robots meta directive that blocks indexing; the bare words
+    # can appear in unrelated script config (e.g. Nuxt robotsDisabledValue).
+    robots_meta = soupify(html).find("meta", attrs={"name": "robots"})
+    robots_content = (robots_meta.get("content") or "").lower() if robots_meta else ""
+    if "noindex" in robots_content or "nofollow" in robots_content:
         missing_features.append("Site marked as non-indexable (noindex/nofollow present)")
 
     # Check for canonical tag
